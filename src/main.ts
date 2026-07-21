@@ -133,13 +133,23 @@ function renderBeatDots(): void {
   }
 }
 
+// The thumb is opaque in every state (no more see-through glass — see
+// style.css), so nothing behind it is ever visible. A range thumb's true
+// pixel center is inset from the raw value fraction by up to half its own
+// width, but that's always less than the thumb's own footprint, so the
+// plain value fraction is all that's needed here: it's guaranteed to fall
+// somewhere under the opaque thumb, never past its edge.
+function updateSliderFill(): void {
+  const f = (bpm - MIN_BPM) / (MAX_BPM - MIN_BPM);
+  bpmSliderEl.style.setProperty("--fill", `${f * 100}%`);
+}
+
 function applyBpm(newBpm: number, persist: boolean): void {
   bpm = clamp(Math.round(newBpm), MIN_BPM, MAX_BPM);
   engine.setBpm(bpm);
   bpmNumberEl.textContent = String(bpm);
   bpmSliderEl.value = String(bpm);
-  const fillPercent = ((bpm - MIN_BPM) / (MAX_BPM - MIN_BPM)) * 100;
-  bpmSliderEl.style.setProperty("--fill", `${fillPercent}%`);
+  updateSliderFill();
   const marking = tempoMarkingFor(bpm);
   markingNameEl.textContent = marking.name;
   markingGlossEl.textContent = marking.gloss;
@@ -210,6 +220,7 @@ bpmSliderEl.addEventListener("input", () => {
 });
 bpmMinusEl.addEventListener("click", () => applyBpm(bpm - 1, true));
 bpmPlusEl.addEventListener("click", () => applyBpm(bpm + 1, true));
+window.addEventListener("resize", updateSliderFill);
 beatsMinusEl.addEventListener("click", () => applyBeatsPerBar(beatsPerBar - 1, true));
 beatsPlusEl.addEventListener("click", () => applyBeatsPerBar(beatsPerBar + 1, true));
 tapButtonEl.addEventListener("click", () => {

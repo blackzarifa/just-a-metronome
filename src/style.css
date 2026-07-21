@@ -23,8 +23,33 @@
   --dot-idle: rgba(0, 0, 0, 0.14);
 
   --btn-bg: rgba(0, 0, 0, 0.05);
-  --btn-border: rgba(20, 20, 22, 0.08);
-  --btn-border-hover: rgba(20, 20, 22, 0.2);
+
+  /* Conic ring standing in for a border: bright on one side of the rim,
+     thinning to almost nothing on the opposite edge, instead of an even
+     outline. On this light background the "bright" side can't add much
+     contrast (it's already close to white), so unlike the dark theme's
+     version of this token, the definition here has to come mostly from
+     the shadow side — its alpha is boosted well past dark theme's
+     near-invisible 0.02 so the ring actually reads against a light
+     surface instead of blending into it. */
+  --btn-edge: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 0.9) 0deg,
+    rgba(255, 255, 255, 0.25) 55deg,
+    rgba(20, 20, 22, 0.16) 130deg,
+    rgba(20, 20, 22, 0.16) 230deg,
+    rgba(255, 255, 255, 0.12) 300deg,
+    rgba(255, 255, 255, 0.9) 360deg
+  );
+  --btn-edge-hover: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 1) 0deg,
+    rgba(255, 255, 255, 0.4) 55deg,
+    rgba(20, 20, 22, 0.22) 130deg,
+    rgba(20, 20, 22, 0.22) 230deg,
+    rgba(255, 255, 255, 0.22) 300deg,
+    rgba(255, 255, 255, 1) 360deg
+  );
 
   --panel-bg: rgba(255, 255, 255, 0.5);
   --panel-border: rgba(20, 20, 22, 0.08);
@@ -34,8 +59,8 @@
   --pivot: rgba(20, 20, 22, 0.3);
   --orb: radial-gradient(circle at 32% 26%, #ffffff 0%, #dde0e4 35%, #a7adb5 68%, #666d75 100%);
 
-  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --serif: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", serif;
 
   color-scheme: light dark;
   font: 16px/1.5 var(--sans);
@@ -46,7 +71,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   --bg-top: #161618;
   --bg-bottom: #0a0a0b;
   --glow: oklch(62% 0.15 255 / 0.16);
@@ -63,8 +88,24 @@
   --dot-idle: rgba(255, 255, 255, 0.16);
 
   --btn-bg: rgba(255, 255, 255, 0.08);
-  --btn-border: rgba(255, 255, 255, 0.12);
-  --btn-border-hover: rgba(255, 255, 255, 0.28);
+  --btn-edge: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 0.55) 0deg,
+    rgba(255, 255, 255, 0.16) 55deg,
+    rgba(255, 255, 255, 0.02) 130deg,
+    rgba(255, 255, 255, 0.02) 230deg,
+    rgba(255, 255, 255, 0.08) 300deg,
+    rgba(255, 255, 255, 0.55) 360deg
+  );
+  --btn-edge-hover: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 0.8) 0deg,
+    rgba(255, 255, 255, 0.3) 55deg,
+    rgba(255, 255, 255, 0.05) 130deg,
+    rgba(255, 255, 255, 0.05) 230deg,
+    rgba(255, 255, 255, 0.16) 300deg,
+    rgba(255, 255, 255, 0.8) 360deg
+  );
 
   --panel-bg: rgba(255, 255, 255, 0.06);
   --panel-border: rgba(255, 255, 255, 0.12);
@@ -134,16 +175,35 @@ body {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  border: 1px solid var(--btn-border);
+  border: 1px solid transparent;
   background: var(--btn-bg);
   color: var(--text);
   cursor: pointer;
   z-index: 10;
-  transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.1s;
+  transition:
+    color 0.2s,
+    background 0.2s,
+    transform 0.1s;
 }
 
-.theme-toggle:hover {
-  border-color: var(--btn-border-hover);
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--btn-edge);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.15s;
+}
+
+.theme-toggle:hover::before {
+  background: var(--btn-edge-hover);
 }
 
 .theme-toggle:active {
@@ -175,11 +235,11 @@ body {
   display: none;
 }
 
-:root[data-theme='dark'] .theme-toggle .icon-sun {
+:root[data-theme="dark"] .theme-toggle .icon-sun {
   display: none;
 }
 
-:root[data-theme='dark'] .theme-toggle .icon-moon {
+:root[data-theme="dark"] .theme-toggle .icon-moon {
   display: block;
 }
 
@@ -265,7 +325,7 @@ body {
   z-index: 0;
 }
 
-:root[data-theme='dark'] .pendulum-shadow {
+:root[data-theme="dark"] .pendulum-shadow {
   background: rgba(0, 0, 0, 0.5);
 }
 
@@ -314,7 +374,9 @@ body {
   height: clamp(28px, 5.6vw, 36px);
   border-radius: 50%;
   background: var(--orb);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .tap-state {
@@ -370,7 +432,9 @@ body {
   height: 8px;
   border-radius: 50%;
   background: var(--dot-idle);
-  transition: background 0.09s ease, transform 0.09s ease;
+  transition:
+    background 0.09s ease,
+    transform 0.09s ease;
 }
 
 .beat-dot.is-accent {
@@ -454,11 +518,12 @@ body {
 /* One bordered, circular button used for every +/- control, so the
    button language stays consistent and every control has a clear edge. */
 .icon-btn {
+  position: relative;
   flex: 0 0 auto;
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid var(--btn-border);
+  border: 1px solid transparent;
   background: var(--btn-bg);
   color: var(--text);
   font-size: 18px;
@@ -466,11 +531,29 @@ body {
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition:
+    background 0.15s,
+    transform 0.1s;
 }
 
-.icon-btn:hover {
-  border-color: var(--btn-border-hover);
+.icon-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--btn-edge);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.15s;
+}
+
+.icon-btn:hover::before {
+  background: var(--btn-edge-hover);
 }
 
 .icon-btn:active {
@@ -527,25 +610,85 @@ body {
   background: var(--accent);
 }
 
+/* The thumb stays fully opaque in every state — glass/backdrop-blur was
+   dropped (see git history if it's ever worth revisiting): Firefox's
+   ::-moz-range-progress fill is positioned natively with no hook to shift
+   it, so a translucent thumb there always showed a hard color seam at
+   its center with no CSS-only fix, and matching that behavior in
+   Chrome/Safari for consistency wasn't worth the added fragility either.
+   The body gradient and inset bevel are angled to put the highlight at
+   30° clockwise from 12 o'clock, matching --btn-edge's conic-gradient
+   `from 30deg` so the thumb reads as lit from the same direction as the
+   buttons. (linear-gradient's angle and conic-gradient's `from` use the
+   same clockwise-from-north convention, but a linear-gradient's bright
+   stop sits opposite its own angle — so 210deg here puts the highlight
+   at 30deg, not 210deg.) */
 .tempo-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
+  width: 32px;
   height: 18px;
-  border-radius: 50%;
-  background: #ffffff;
+  border-radius: 999px;
+  background: linear-gradient(210deg, #ffffff 0%, #ffffff 45%, #d4d5d9 100%);
   border: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.35),
+    inset 1px -1px 1px rgba(255, 255, 255, 0.9),
+    inset -1px 1px 2px rgba(0, 0, 0, 0.1);
+  /* Centers the 18px thumb over the 6px track: (trackHeight - thumbHeight) / 2. */
   margin-top: -6px;
+  transition:
+    transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.15s,
+    box-shadow 0.15s;
 }
 
 .tempo-slider::-moz-range-thumb {
-  width: 18px;
+  width: 32px;
   height: 18px;
-  border-radius: 50%;
-  background: #ffffff;
+  border-radius: 999px;
+  background: linear-gradient(210deg, #ffffff 0%, #ffffff 45%, #d4d5d9 100%);
   border: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.35),
+    inset 1px -1px 1px rgba(255, 255, 255, 0.9),
+    inset -1px 1px 2px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+/* Pressed: a modest grow (not the 1.6x the old glass version used —
+   that read fine when the thumb was translucent and airy, but felt
+   oversized once it went solid) plus a stronger accent tint, same light
+   angle as the resting state. */
+.tempo-slider:active::-webkit-slider-thumb {
+  transform: scale(1.25);
+  background: linear-gradient(
+    210deg,
+    color-mix(in srgb, var(--accent) 55%, white 45%) 0%,
+    color-mix(in srgb, var(--accent) 70%, white 30%) 45%,
+    color-mix(in srgb, var(--accent) 80%, black 10%) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 1px -1px 1px rgba(255, 255, 255, 0.7),
+    inset -1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.tempo-slider:active::-moz-range-thumb {
+  transform: scale(1.25);
+  background: linear-gradient(
+    210deg,
+    color-mix(in srgb, var(--accent) 55%, white 45%) 0%,
+    color-mix(in srgb, var(--accent) 70%, white 30%) 45%,
+    color-mix(in srgb, var(--accent) 80%, black 10%) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 1px -1px 1px rgba(255, 255, 255, 0.7),
+    inset -1px 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 /* ---------- beats + tap ---------- */
@@ -572,11 +715,12 @@ body {
 }
 
 .tap-button {
+  position: relative;
   flex: 1 1 auto;
   height: 38px;
   padding: 0 22px;
   border-radius: 999px;
-  border: 1px solid var(--btn-border);
+  border: 1px solid transparent;
   background: var(--btn-bg);
   color: var(--text);
   font-family: var(--sans);
@@ -584,11 +728,29 @@ body {
   font-size: 13px;
   letter-spacing: 0.14em;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition:
+    background 0.15s,
+    transform 0.1s;
 }
 
-.tap-button:hover {
-  border-color: var(--btn-border-hover);
+.tap-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--btn-edge);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.15s;
+}
+
+.tap-button:hover::before {
+  background: var(--btn-edge-hover);
 }
 
 .tap-button:active {
