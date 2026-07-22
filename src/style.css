@@ -862,3 +862,35 @@ body {
     transform: scale(1);
   }
 }
+
+/* ---------- short viewports (small phones) ----------
+   The default sizing has several px floors (pendulum-stage
+   height, gaps, padding) that stop shrinking once vh-based
+   values drop below them, which is fine down to normal phone
+   heights but overflows 100svh on short screens (e.g. 360x568)
+   and makes the page scroll. This tightens those floors so the
+   whole layout keeps fitting in one screen. */
+@media (max-height: 700px) {
+  #app {
+    gap: clamp(10px, 2vh, 34px);
+    padding: calc(16px + env(safe-area-inset-top)) 24px
+      calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .tap-zone {
+    gap: clamp(8px, 1.8vh, 24px);
+  }
+
+  .pendulum-stage {
+    height: clamp(110px, 20vh, 260px);
+  }
+
+  .bpm-number {
+    font-size: clamp(48px, 15vw, 104px);
+  }
+
+  .control-panel {
+    padding: 14px 22px 12px;
+    gap: 10px;
+  }
+}
