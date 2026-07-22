@@ -562,7 +562,7 @@ body {
 
 .help-tip {
   margin: 14px 0 0;
-  padding-top: 12px;
+  padding-top: 20px;
   border-top: 1px solid var(--panel-border);
   display: flex;
   align-items: center;
