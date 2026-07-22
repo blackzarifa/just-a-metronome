@@ -698,19 +698,6 @@ body {
   background: var(--accent);
 }
 
-/* The thumb stays fully opaque in every state — glass/backdrop-blur was
-   dropped (see git history if it's ever worth revisiting): Firefox's
-   ::-moz-range-progress fill is positioned natively with no hook to shift
-   it, so a translucent thumb there always showed a hard color seam at
-   its center with no CSS-only fix, and matching that behavior in
-   Chrome/Safari for consistency wasn't worth the added fragility either.
-   The body gradient and inset bevel are angled to put the highlight at
-   30° clockwise from 12 o'clock, matching --btn-edge's conic-gradient
-   `from 30deg` so the thumb reads as lit from the same direction as the
-   buttons. (linear-gradient's angle and conic-gradient's `from` use the
-   same clockwise-from-north convention, but a linear-gradient's bright
-   stop sits opposite its own angle — so 210deg here puts the highlight
-   at 30deg, not 210deg.) */
 .tempo-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -747,10 +734,6 @@ body {
     box-shadow 0.15s;
 }
 
-/* Pressed: a modest grow (not the 1.6x the old glass version used —
-   that read fine when the thumb was translucent and airy, but felt
-   oversized once it went solid) plus a stronger accent tint, same light
-   angle as the resting state. */
 .tempo-slider:active::-webkit-slider-thumb {
   transform: scale(1.25);
   background: linear-gradient(
@@ -873,8 +856,7 @@ body {
 @media (max-height: 700px) {
   #app {
     gap: clamp(10px, 2vh, 34px);
-    padding: calc(16px + env(safe-area-inset-top)) 24px
-      calc(16px + env(safe-area-inset-bottom));
+    padding: calc(16px + env(safe-area-inset-top)) 24px calc(16px + env(safe-area-inset-bottom));
   }
 
   .tap-zone {

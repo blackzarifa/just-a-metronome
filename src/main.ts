@@ -152,12 +152,6 @@ function renderBeatDots(): void {
   }
 }
 
-// The thumb is opaque in every state (no more see-through glass — see
-// style.css), so nothing behind it is ever visible. A range thumb's true
-// pixel center is inset from the raw value fraction by up to half its own
-// width, but that's always less than the thumb's own footprint, so the
-// plain value fraction is all that's needed here: it's guaranteed to fall
-// somewhere under the opaque thumb, never past its edge.
 function updateSliderFill(): void {
   const f = (bpm - MIN_BPM) / (MAX_BPM - MIN_BPM);
   bpmSliderEl.style.setProperty("--fill", `${f * 100}%`);
@@ -239,7 +233,7 @@ function setTheme(theme: Theme): void {
 // the tap zone (margins, the gap around the panel, etc). A click while the
 // help popover is open just closes it, rather than also toggling playback
 // underneath.
-app.addEventListener("click", (e) => {
+app.addEventListener("click", e => {
   const target = e.target as HTMLElement;
   if (target.closest(".control-panel") || target.closest(".corner-btn")) return;
   if (helpPopoverEl.classList.contains("is-open")) {
@@ -253,7 +247,7 @@ app.addEventListener("click", (e) => {
 // here would double-fire on Space since this element is inside that bubble
 // path, toggling start then immediately stop. Enter isn't Space's concern,
 // so it's handled locally per standard role="button" semantics.
-tapZoneEl.addEventListener("keydown", (e) => {
+tapZoneEl.addEventListener("keydown", e => {
   if (e.key === "Enter") {
     e.preventDefault();
     if (!e.repeat) handleToggle();
@@ -281,7 +275,7 @@ themeToggleEl.addEventListener("click", () => {
 helpToggleEl.addEventListener("click", toggleHelp);
 helpCloseEl.addEventListener("click", () => closeHelp(true));
 
-window.addEventListener("keydown", (e) => {
+window.addEventListener("keydown", e => {
   const isButtonFocused = document.activeElement instanceof HTMLButtonElement;
   const key = e.key;
 
