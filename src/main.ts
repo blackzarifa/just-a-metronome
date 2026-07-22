@@ -20,7 +20,16 @@ app.innerHTML = `
   <div class="backdrop-grain" aria-hidden="true"></div>
   <div class="backdrop-glow" aria-hidden="true"></div>
 
-  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark theme">
+  <button id="help-toggle" class="corner-btn help-toggle" type="button"
+          aria-label="Show instructions and keyboard shortcuts" aria-haspopup="dialog" aria-expanded="false">
+    <svg class="icon icon-help" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M9.3 9.4a2.8 2.8 0 1 1 4.2 2.4c-.9.55-1.5 1.05-1.5 2.1"></path>
+      <circle cx="12" cy="17.3" r="1" fill="currentColor" stroke="none"></circle>
+    </svg>
+  </button>
+
+  <button id="theme-toggle" class="corner-btn theme-toggle" type="button" aria-label="Switch to dark theme">
     <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="4.2"></circle>
       <g class="sun-rays">
@@ -38,6 +47,20 @@ app.innerHTML = `
       <path d="M20.5 14.7A8.5 8.5 0 1 1 9.3 3.5a7 7 0 0 0 11.2 11.2Z"></path>
     </svg>
   </button>
+
+  <section id="help-popover" class="help-popover" role="dialog" aria-modal="false"
+           aria-label="Instructions and keyboard shortcuts" aria-hidden="true">
+    <button id="help-close" class="icon-btn help-close" type="button" aria-label="Close">&times;</button>
+    <h2 class="help-title">How to use</h2>
+    <p class="help-text">Click or tap anywhere to start or stop the beat.</p>
+    <ul class="help-shortcuts">
+      <li><kbd>Space</kbd><span>start / stop</span></li>
+      <li><kbd>&larr;</kbd><kbd>&rarr;</kbd><span>tempo &plusmn;1 (&plusmn;5 with Shift)</span></li>
+      <li><kbd>&uarr;</kbd><kbd>&darr;</kbd><span>beats per bar</span></li>
+      <li><kbd>T</kbd><span>tap tempo</span></li>
+    </ul>
+    <p class="help-tip"><kbd>WASD</kbd> / <kbd>HJKL</kbd> also supported</p>
+  </section>
 
   <main id="tap-zone" class="tap-zone" role="button" tabindex="0" aria-pressed="false"
         aria-label="Tap, click, or press space to start or stop the metronome">
@@ -82,13 +105,6 @@ app.innerHTML = `
       </div>
     </div>
   </section>
-
-  <p class="key-legend" aria-hidden="true">
-    <span class="hint"><kbd>Space</kbd> start/stop</span>
-    <span class="hint"><kbd>&larr;</kbd><kbd>&rarr;</kbd> tempo</span>
-    <span class="hint"><kbd>&uarr;</kbd><kbd>&darr;</kbd> beats</span>
-    <span class="hint"><kbd>T</kbd> tap</span>
-  </p>
 `;
 
 const tapZoneEl = document.querySelector<HTMLElement>("#tap-zone")!;
@@ -106,6 +122,9 @@ const beatsMinusEl = document.querySelector<HTMLButtonElement>("#beats-minus")!;
 const beatsPlusEl = document.querySelector<HTMLButtonElement>("#beats-plus")!;
 const tapButtonEl = document.querySelector<HTMLButtonElement>("#tap-button")!;
 const themeToggleEl = document.querySelector<HTMLButtonElement>("#theme-toggle")!;
+const helpToggleEl = document.querySelector<HTMLButtonElement>("#help-toggle")!;
+const helpPopoverEl = document.querySelector<HTMLElement>("#help-popover")!;
+const helpCloseEl = document.querySelector<HTMLButtonElement>("#help-close")!;
 
 const engine = new MetronomeEngine();
 const tapTempo = new TapTempo();
@@ -183,6 +202,26 @@ function pulseTapButton(): void {
   tapButtonEl.classList.add("pulse");
 }
 
+function openHelp(): void {
+  helpPopoverEl.classList.add("is-open");
+  helpPopoverEl.setAttribute("aria-hidden", "false");
+  helpToggleEl.setAttribute("aria-expanded", "true");
+  helpCloseEl.focus();
+}
+
+function closeHelp(returnFocus: boolean): void {
+  if (!helpPopoverEl.classList.contains("is-open")) return;
+  helpPopoverEl.classList.remove("is-open");
+  helpPopoverEl.setAttribute("aria-hidden", "true");
+  helpToggleEl.setAttribute("aria-expanded", "false");
+  if (returnFocus) helpToggleEl.focus();
+}
+
+function toggleHelp(): void {
+  if (helpPopoverEl.classList.contains("is-open")) closeHelp(true);
+  else openHelp();
+}
+
 function setTheme(theme: Theme): void {
   document.documentElement.setAttribute("data-theme", theme);
   themeToggleEl.setAttribute(
@@ -195,12 +234,18 @@ function setTheme(theme: Theme): void {
 // --- wire up interactions ---
 
 // Anywhere on the page starts/stops the beat, except the control panel and
-// theme toggle, which have their own click behavior — delegated on #app
+// corner buttons, which have their own click behavior — delegated on #app
 // rather than a listener per element, so it also covers empty space outside
-// the tap zone (margins, the gap around the panel, etc).
+// the tap zone (margins, the gap around the panel, etc). A click while the
+// help popover is open just closes it, rather than also toggling playback
+// underneath.
 app.addEventListener("click", (e) => {
   const target = e.target as HTMLElement;
-  if (target.closest(".control-panel") || target.closest(".theme-toggle")) return;
+  if (target.closest(".control-panel") || target.closest(".corner-btn")) return;
+  if (helpPopoverEl.classList.contains("is-open")) {
+    if (!target.closest(".help-popover")) closeHelp(false);
+    return;
+  }
   handleToggle();
 });
 // Space is handled by the single window-level listener below (it already
@@ -233,9 +278,23 @@ themeToggleEl.addEventListener("click", () => {
   setTheme(current === "dark" ? "light" : "dark");
 });
 
+helpToggleEl.addEventListener("click", toggleHelp);
+helpCloseEl.addEventListener("click", () => closeHelp(true));
+
 window.addEventListener("keydown", (e) => {
   const isButtonFocused = document.activeElement instanceof HTMLButtonElement;
   const key = e.key;
+
+  if (key === "Escape") {
+    closeHelp(true);
+    return;
+  }
+
+  if (key === "?") {
+    e.preventDefault();
+    toggleHelp();
+    return;
+  }
 
   if (key === " " || key === "Spacebar") {
     if (isButtonFocused) return; // let the focused button handle its own activation

@@ -164,12 +164,11 @@ body {
   z-index: 0;
 }
 
-/* ---------- theme toggle ---------- */
+/* ---------- corner buttons: theme toggle + help toggle ---------- */
 
-.theme-toggle {
+.corner-btn {
   position: fixed;
   top: max(20px, env(safe-area-inset-top));
-  right: 22px;
   width: 34px;
   height: 34px;
   display: grid;
@@ -186,7 +185,7 @@ body {
     transform 0.1s;
 }
 
-.theme-toggle::before {
+.corner-btn::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -202,17 +201,35 @@ body {
   transition: background 0.15s;
 }
 
-.theme-toggle:hover::before {
+.corner-btn:hover::before {
   background: var(--btn-edge-hover);
 }
 
-.theme-toggle:active {
+.corner-btn:active {
   transform: scale(0.92);
 }
 
-.theme-toggle:focus-visible {
+.corner-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.theme-toggle {
+  right: 22px;
+}
+
+.help-toggle {
+  right: 66px;
+}
+
+.help-toggle .icon-help {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .theme-toggle .icon {
@@ -448,30 +465,86 @@ body {
   transform: scale(1.3);
 }
 
-/* ---------- keyboard shortcuts: a footer inside the panel, so
-   it reads as "these keys drive these controls" ---------- */
+/* ---------- help popover: instructions + keyboard shortcuts,
+   flies out below the "?" button instead of a full-screen modal.
+   Same frosted-glass treatment the bottom control panel uses. ---------- */
 
-.key-legend {
-  margin: 0;
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 7px 13px;
-  font-size: 11.5px;
+.help-popover {
+  position: fixed;
+  top: calc(max(20px, env(safe-area-inset-top)) + 34px + 10px);
+  right: 22px;
+  z-index: 9;
+  width: min(300px, calc(100vw - 44px));
+  padding: 18px 20px 20px;
+  border-radius: 20px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  cursor: default;
+  transform-origin: top right;
+  opacity: 0;
+  transform: scale(0.94) translateY(-6px);
+  pointer-events: none;
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.help-popover.is-open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+.icon-btn.help-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 17px;
+}
+
+.help-title {
+  margin: 0 36px 8px 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.help-text {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--text-muted);
 }
 
-.key-legend .hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
+.help-shortcuts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 
-.key-legend kbd {
+.help-shortcuts li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.help-shortcuts span {
+  margin-left: 4px;
+}
+
+.help-shortcuts kbd,
+.help-tip kbd {
   font-family: inherit;
   font-size: 10.5px;
   font-weight: 600;
@@ -485,6 +558,21 @@ body {
   background: var(--btn-bg);
   border: 1px solid var(--panel-border);
   color: var(--text);
+}
+
+.help-tip {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.help-tip kbd {
+  margin: 0 1px;
 }
 
 /* ============================================================
