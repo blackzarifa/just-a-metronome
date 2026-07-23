@@ -222,6 +222,14 @@ body {
   right: 66px;
 }
 
+/* Keyboard shortcuts don't apply on touch devices, so the button
+   pointing to them shouldn't either. */
+@media (hover: none) and (pointer: coarse) {
+  .help-toggle {
+    display: none;
+  }
+}
+
 .help-toggle .icon-help {
   width: 18px;
   height: 18px;
@@ -855,24 +863,25 @@ body {
    whole layout keeps fitting in one screen. */
 @media (max-height: 700px) {
   #app {
-    gap: clamp(10px, 2vh, 34px);
-    padding: calc(16px + env(safe-area-inset-top)) 24px calc(16px + env(safe-area-inset-bottom));
+    justify-content: flex-end;
+    gap: clamp(14px, 3vh, 34px);
+    padding: calc(64px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
   }
 
   .tap-zone {
-    gap: clamp(8px, 1.8vh, 24px);
+    gap: clamp(10px, 2.2vh, 20px);
   }
 
   .pendulum-stage {
-    height: clamp(110px, 20vh, 260px);
+    height: clamp(130px, 24vh, 260px);
   }
 
   .bpm-number {
-    font-size: clamp(48px, 15vw, 104px);
+    font-size: clamp(56px, 17vw, 104px);
   }
 
   .control-panel {
-    padding: 14px 22px 12px;
-    gap: 10px;
+    padding: 18px 22px 16px;
+    gap: 14px;
   }
 }

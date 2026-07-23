@@ -23,9 +23,16 @@ app.innerHTML = `
   <button id="help-toggle" class="corner-btn help-toggle" type="button"
           aria-label="Show instructions and keyboard shortcuts" aria-haspopup="dialog" aria-expanded="false">
     <svg class="icon icon-help" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="9"></circle>
-      <path d="M9.3 9.4a2.8 2.8 0 1 1 4.2 2.4c-.9.55-1.5 1.05-1.5 2.1"></path>
-      <circle cx="12" cy="17.3" r="1" fill="currentColor" stroke="none"></circle>
+      <rect x="2.5" y="6" width="19" height="13" rx="2"></rect>
+      <line x1="6" y1="9.5" x2="6" y2="9.5"></line>
+      <line x1="9.5" y1="9.5" x2="9.5" y2="9.5"></line>
+      <line x1="13" y1="9.5" x2="13" y2="9.5"></line>
+      <line x1="16.5" y1="9.5" x2="16.5" y2="9.5"></line>
+      <line x1="6" y1="12.5" x2="6" y2="12.5"></line>
+      <line x1="9.5" y1="12.5" x2="9.5" y2="12.5"></line>
+      <line x1="13" y1="12.5" x2="13" y2="12.5"></line>
+      <line x1="16.5" y1="12.5" x2="16.5" y2="12.5"></line>
+      <line x1="7" y1="15.7" x2="15.5" y2="15.7"></line>
     </svg>
   </button>
 
