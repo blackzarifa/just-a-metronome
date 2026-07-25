@@ -69,6 +69,7 @@ app.innerHTML = `
     <p class="help-tip"><kbd>WASD</kbd> / <kbd>HJKL</kbd> also supported</p>
   </section>
 
+  <div class="hero">
   <main id="tap-zone" class="tap-zone" role="button" tabindex="0" aria-pressed="false"
         aria-label="Tap, click, or press space to start or stop the metronome">
     <div class="tempo-marking">
@@ -112,7 +113,65 @@ app.innerHTML = `
       </div>
     </div>
   </section>
+  </div>
+
+  <div class="scroll-hint-region">
+    <a id="scroll-hint" class="scroll-hint" href="#links"
+       aria-label="More: source code and support">
+      <svg class="icon icon-chevron" viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </a>
+  </div>
 `;
+
+// Second screen (source + support links) lives as a sibling of #app so it
+// sits outside the click-to-start zone and reveals only on deliberate scroll.
+const linksSection = document.createElement("section");
+linksSection.id = "links";
+linksSection.className = "links-section";
+linksSection.innerHTML = `
+  <div class="links-inner">
+    <div class="colophon">
+      <p class="colophon-name">Just a Metronome</p>
+      <p class="colophon-gloss">no ads. no subscriptions. just a metronome.</p>
+    </div>
+    <div class="hairline"></div>
+    <div class="link-row">
+    <a class="link-card" href="https://github.com/blackzarifa/just-a-metronome"
+       target="_blank" rel="noopener noreferrer">
+      <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.48
+                 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62
+                 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07
+                 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 2.5-.34c.85 0 1.71.12 2.5.34
+                 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9
+                 0 1.37-.01 2.480-.01 2.82 0 .27.18.59.69.48A10.04 10.04 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"></path>
+      </svg>
+      <div class="link-text">
+        <span class="link-label">GitHub</span>
+        <span class="link-sub">Source &amp; issues</span>
+      </div>
+    </a>
+
+    <a class="link-card" href="#" data-placeholder="donation"
+       target="_blank" rel="noopener noreferrer">
+      <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 8h13a3 3 0 0 1 0 6h-1"></path>
+        <path d="M4 8v8a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V8z"></path>
+        <line x1="7" y1="2.5" x2="7" y2="4.5"></line>
+        <line x1="10.5" y1="2.5" x2="10.5" y2="4.5"></line>
+        <line x1="14" y1="2.5" x2="14" y2="4.5"></line>
+      </svg>
+      <div class="link-text">
+        <span class="link-label">Buy me a coffee</span>
+        <span class="link-sub">If it helped</span>
+      </div>
+    </a>
+    </div>
+  </div>
+`;
+document.body.appendChild(linksSection);
 
 const tapZoneEl = document.querySelector<HTMLElement>("#tap-zone")!;
 const tapStateEl = document.querySelector<HTMLElement>("#tap-state")!;
@@ -132,6 +191,21 @@ const themeToggleEl = document.querySelector<HTMLButtonElement>("#theme-toggle")
 const helpToggleEl = document.querySelector<HTMLButtonElement>("#help-toggle")!;
 const helpPopoverEl = document.querySelector<HTMLElement>("#help-popover")!;
 const helpCloseEl = document.querySelector<HTMLButtonElement>("#help-close")!;
+const scrollHintEl = document.querySelector<HTMLAnchorElement>("#scroll-hint")!;
+
+// Always open on the metronome (first screen). The browser otherwise restores
+// the previous scroll position, and a leftover #links hash would jump straight
+// to the links screen — both would drop a returning visitor onto the wrong page.
+history.scrollRestoration = "manual";
+if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
+// Reveal the links screen without writing a #links hash into the URL (which is
+// what made the next load reopen there).
+scrollHintEl.addEventListener("click", e => {
+  e.preventDefault();
+  linksSection.scrollIntoView({ behavior: "smooth" });
+});
 
 const engine = new MetronomeEngine();
 const tapTempo = new TapTempo();
@@ -242,7 +316,7 @@ function setTheme(theme: Theme): void {
 // underneath.
 app.addEventListener("click", e => {
   const target = e.target as HTMLElement;
-  if (target.closest(".control-panel") || target.closest(".corner-btn")) return;
+  if (target.closest(".control-panel") || target.closest(".corner-btn") || target.closest(".scroll-hint")) return;
   if (helpPopoverEl.classList.contains("is-open")) {
     if (!target.closest(".help-popover")) closeHelp(false);
     return;

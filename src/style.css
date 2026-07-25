@@ -131,13 +131,45 @@ body {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: clamp(20px, 3.6vh, 34px);
+  align-items: center;
   position: relative;
-  padding: calc(28px + env(safe-area-inset-top)) 24px calc(28px + env(safe-area-inset-bottom));
+  padding: calc(28px + env(safe-area-inset-top)) 24px
+    calc(28px + env(safe-area-inset-bottom));
   overflow: hidden;
   cursor: pointer;
+}
+
+.hero {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 3.6vh, 34px);
+}
+
+/* Absolutely positioned (not a flex child) so it never participates in
+   #app's centering — the hero block must center/pin exactly as it did
+   before this arrow existed. `bottom` on an absolutely positioned child
+   resolves against #app's padding-box edge, which already sits flush
+   with the true viewport edge, so this still touches bottom with zero
+   extra gap; and because #app scrolls out of flow normally (it's not
+   fixed), the arrow scrolls away with it once the links section is
+   reached, instead of staying pinned on top of that section. */
+.scroll-hint-region {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.scroll-hint-region .scroll-hint {
+  pointer-events: auto;
 }
 
 /* ---------- ambient backdrop: grain + glow ---------- */
@@ -863,9 +895,21 @@ body {
    whole layout keeps fitting in one screen. */
 @media (max-height: 700px) {
   #app {
+    /* On short screens, pin .hero to the bottom so any leftover height
+       goes above the title instead of below the panel. The arrow is
+       absolutely positioned (outside the flex flow, so it doesn't break
+       .control-panel's percentage width — see .scroll-hint-region), so
+       nothing in flow reserves its space automatically; the extra 54px
+       here (44px arrow + 10px gap) is that reserved space, keeping the
+       panel from landing underneath it. Desktop and taller phones keep
+       the centered layout above. */
     justify-content: flex-end;
-    gap: clamp(14px, 3vh, 34px);
-    padding: calc(64px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+    padding: calc(58px + env(safe-area-inset-top)) 24px
+      calc(54px + env(safe-area-inset-bottom));
+  }
+
+  .hero {
+    gap: clamp(12px, 2.7vh, 34px);
   }
 
   .tap-zone {
@@ -873,7 +917,7 @@ body {
   }
 
   .pendulum-stage {
-    height: clamp(130px, 24vh, 260px);
+    height: clamp(104px, 19.5vh, 260px);
   }
 
   .bpm-number {
@@ -883,5 +927,224 @@ body {
   .control-panel {
     padding: 18px 22px 16px;
     gap: 14px;
+  }
+}
+
+/* ---------- scroll hint arrow (bottom of first screen) ---------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.scroll-hint {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--text-muted);
+  z-index: 5;
+  cursor: pointer;
+  transition:
+    opacity 0.4s,
+    color 0.2s;
+  /* A few bobs to draw the eye, then it rests so it stops nagging.
+     Ends on the 0%/100% keyframe (no offset), i.e. at rest. */
+  animation: scroll-bob 1.4s ease-in-out 5 0.5s both;
+}
+
+.scroll-hint:hover {
+  color: var(--text);
+}
+
+.scroll-hint .icon-chevron {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes scroll-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+/* Fade the hint out once the user has scrolled past the first screen. */
+body.has-scrolled .scroll-hint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint {
+    animation: none;
+  }
+}
+
+/* ---------- second screen: source + support links ---------- */
+
+.links-section {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 40px 24px calc(48px + env(safe-area-inset-bottom));
+}
+
+.links-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Two small cards alone on a wide screen read as unfinished — this gives
+   the second screen its own anchor (name + one-line pitch, echoing the
+   .marking-name/.marking-gloss voice from the first screen) so the row
+   of links sits under something, instead of floating by itself. */
+.colophon {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.colophon-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(26px, 4.4vw, 34px);
+  color: var(--text);
+}
+
+.colophon-gloss {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(14px, 2.2vw, 16px);
+  color: var(--text-muted);
+}
+
+.hairline {
+  width: 40px;
+  height: 1px;
+  background: var(--hairline);
+}
+
+.link-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 168px;
+  padding: 28px 20px 24px;
+  border-radius: 20px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s;
+}
+
+.link-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--panel-border));
+}
+
+.link-icon {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--text-muted);
+}
+
+/* GitHub mark is a filled glyph, not a stroked one. */
+.link-card:first-child .link-icon {
+  fill: var(--text-muted);
+  stroke: none;
+}
+
+.link-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.link-label {
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.link-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ---------- wide viewports (desktop) ----------
+   The .colophon heading above now anchors the row, so the cards can
+   stay side by side (matching mobile) instead of being stacked into a
+   column to avoid looking stranded — they just grow a little and gain
+   a left-aligned icon+text layout that reads better at this size. */
+@media (min-width: 900px) {
+  .links-inner {
+    max-width: 620px;
+    gap: 40px;
+  }
+
+  .link-card {
+    width: 280px;
+    padding: 32px 28px 28px;
+    gap: 14px;
+    border-radius: 24px;
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .link-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .link-text {
+    align-items: flex-start;
+  }
+
+  .link-label {
+    font-size: 1.05rem;
+  }
+
+  .link-sub {
+    font-size: 0.85rem;
   }
 }
