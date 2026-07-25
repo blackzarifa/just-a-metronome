@@ -109,6 +109,10 @@
 .icon-btn.help-close {
   width: var(--close-size);
   height: var(--close-size);
+  /* Glyph sizing, not type — this scales the "x" character to fit the circle,
+     so it belongs with the button's dimensions rather than on --type-*. One
+     step under the +/- buttons' 18px because "x" reads optically larger than
+     "+" at the same size. */
   font-size: 17px;
   /* In flow the button would land at the popover's content edge; this pulls
      it back out to --close-inset from the popover's outer edge, which is
@@ -124,13 +128,13 @@
   margin: 0;
   font-family: var(--sans);
   font-weight: 600;
-  font-size: 15px;
+  font-size: var(--type-lg);
   color: var(--text);
 }
 
 .help-text {
   margin: 0 0 var(--space-lg);
-  font-size: 13px;
+  font-size: var(--type-sm);
   line-height: 1.5;
   color: var(--text-muted);
 }
@@ -148,7 +152,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 13px;
+  font-size: var(--type-sm);
   color: var(--text-muted);
 }
 
@@ -161,7 +165,7 @@
 .help-shortcuts kbd,
 .help-tip kbd {
   font-family: inherit;
-  font-size: 10.5px;
+  font-size: var(--type-xs);
   font-weight: 600;
   min-width: 17px;
   height: 18px;
@@ -182,7 +186,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  font-size: 12px;
+  font-size: var(--type-sm);
   color: var(--text-muted);
 }
 

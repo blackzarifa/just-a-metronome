@@ -65,6 +65,9 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
+  /* Glyph sizing, not type: this scales the "+"/"-" characters to fit the
+     34px circle, so it tracks the button's dimensions rather than the
+     --type-* scale. */
   font-size: 18px;
   line-height: 1;
 }

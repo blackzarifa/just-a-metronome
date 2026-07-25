@@ -110,14 +110,19 @@
   gap: var(--space-2xs);
 }
 
+/* One step above .link-sub, and no higher: the 168px card leaves 128px of
+   content box, which Chrome floors to 126, and "Buy me a coffee" needs 126.7px
+   at -lg. That extra step would wrap it to a second line and grow both cards
+   by 24px, so the card width — not the scale — sets the ceiling here. The
+   wide breakpoint below has 240px to work with and takes that step. */
 .link-label {
-  font-size: 0.98rem;
+  font-size: var(--type-md);
   font-weight: 600;
   letter-spacing: 0.01em;
 }
 
 .link-sub {
-  font-size: 0.78rem;
+  font-size: var(--type-sm);
   color: var(--text-muted);
 }
 
@@ -149,11 +154,14 @@
     align-items: flex-start;
   }
 
+  /* The wider card takes both lines one step up the scale together, so the
+     label keeps exactly the same lead over its sub-line at both breakpoints
+     instead of each size drifting on its own. */
   .link-label {
-    font-size: 1.05rem;
+    font-size: var(--type-lg);
   }
 
   .link-sub {
-    font-size: 0.85rem;
+    font-size: var(--type-md);
   }
 }

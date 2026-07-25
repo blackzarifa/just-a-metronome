@@ -5,7 +5,7 @@
    number. Deliberately NOT in this scale:
      - element sizes (the 34px button, 44px hint, 38px tap button, 168/280px
        cards): those answer to touch targets and content, not to a grid;
-     - font sizes: type wants a type scale, which is a separate axis;
+     - font sizes: type is a separate axis, see --type-* below;
      - one-off geometry (pendulum rod, slider track) that already derives
        from its own component-local variables. */
 :root {
@@ -40,6 +40,26 @@
   /* Decelerating ease used by everything that settles into place: the
      pendulum's rest, the popover's open, the slider thumb's grow. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* The type scale: 16px base, ratio 1.125 (a major second), rounded to the
+     nearest half-pixel. Its own axis — never substitute a --space-* here, a
+     4px layout grid has nothing to say about type. Before this existed the
+     app used eight literal sizes inside an 8px range (10.5/12/13/14/15/16),
+     several of them doing the same job at gaps the eye can't resolve (13 vs
+     14, 15 vs 16); four steps that are actually distinguishable replaced them.
+       -xs  fine print and the kbd chips
+       -sm  body copy: help text, shortcut rows, tap state, unit labels
+       -md  the values that body copy labels, and small card headings
+       -lg  the largest non-display text: popover title, beats number
+     It stops at 16px because everything above that in this app is a clamp()
+     display size — BPM number, tempo marking, colophon — fluid by design and
+     deliberately not stepped. Also outside the scale: the +/-/x glyph sizes
+     in primitives.css and corner-controls.css, which size a character to fit
+     a circular button rather than setting text. */
+  --type-xs: 11px;
+  --type-sm: 12.5px;
+  --type-md: 14px;
+  --type-lg: 16px;
 }
 
 /* Theme tokens. Every color in the app resolves through one of these, so
