@@ -290,6 +290,8 @@ window.addEventListener("keydown", e => {
     return;
   }
 
+  if (e.ctrlKey || e.metaKey || e.altKey) return; // don't hijack browser shortcuts like Ctrl+L
+
   const lower = key.toLowerCase();
   const tempoStep = e.shiftKey ? 5 : 1;
 
