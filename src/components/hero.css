@@ -345,16 +345,20 @@
   gap: var(--space-md);
 }
 
-/* Fixed width so stepping from 9 to 10 beats doesn't shove the +/- buttons
-   sideways. */
 .beats-value {
-  min-width: 56px;
   text-align: center;
   color: var(--text-muted);
   font-size: var(--type-md);
 }
 
+/* Reserves room for the two-digit maximum (12) so stepping 9 -> 10 doesn't
+   widen the label and shove the +/- buttons sideways. tabular-nums makes every
+   digit the same width, so 2ch is exactly two digits — the previous 56px was
+   hand-measured and 5px too narrow, which meant it never actually held. */
 .beats-number {
+  display: inline-block;
+  min-width: 2ch;
+  text-align: right;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   font-size: var(--type-lg);
