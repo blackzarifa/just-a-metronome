@@ -2,16 +2,15 @@ import "./style.css";
 import { MetronomeEngine, TapTempo } from "./audio";
 import { Pendulum } from "./pendulum";
 import { tempoMarkingFor } from "./tempo";
+import { createCornerControls } from "./components/corner-controls";
 import {
   loadState,
   saveBpm,
   saveBeatsPerBar,
-  saveTheme,
   MIN_BPM,
   MAX_BPM,
   MIN_BEATS_PER_BAR,
   MAX_BEATS_PER_BAR,
-  type Theme,
 } from "./storage";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -20,62 +19,13 @@ app.innerHTML = `
   <div class="backdrop-grain" aria-hidden="true"></div>
   <div class="backdrop-glow" aria-hidden="true"></div>
 
-  <button id="help-toggle" class="corner-btn help-toggle" type="button"
-          aria-label="Show instructions and keyboard shortcuts" aria-haspopup="dialog" aria-expanded="false">
-    <svg class="icon icon-help" viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2.5" y="6" width="19" height="13" rx="2"></rect>
-      <line x1="6" y1="9.5" x2="6" y2="9.5"></line>
-      <line x1="9.5" y1="9.5" x2="9.5" y2="9.5"></line>
-      <line x1="13" y1="9.5" x2="13" y2="9.5"></line>
-      <line x1="16.5" y1="9.5" x2="16.5" y2="9.5"></line>
-      <line x1="6" y1="12.5" x2="6" y2="12.5"></line>
-      <line x1="9.5" y1="12.5" x2="9.5" y2="12.5"></line>
-      <line x1="13" y1="12.5" x2="13" y2="12.5"></line>
-      <line x1="16.5" y1="12.5" x2="16.5" y2="12.5"></line>
-      <line x1="7" y1="15.7" x2="15.5" y2="15.7"></line>
-    </svg>
-  </button>
-
-  <button id="theme-toggle" class="corner-btn theme-toggle" type="button" aria-label="Switch to dark theme">
-    <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="4.2"></circle>
-      <g class="sun-rays">
-        <line x1="12" y1="1.5" x2="12" y2="4.5"></line>
-        <line x1="12" y1="19.5" x2="12" y2="22.5"></line>
-        <line x1="1.5" y1="12" x2="4.5" y2="12"></line>
-        <line x1="19.5" y1="12" x2="22.5" y2="12"></line>
-        <line x1="4.4" y1="4.4" x2="6.5" y2="6.5"></line>
-        <line x1="17.5" y1="17.5" x2="19.6" y2="19.6"></line>
-        <line x1="4.4" y1="19.6" x2="6.5" y2="17.5"></line>
-        <line x1="17.5" y1="6.5" x2="19.6" y2="4.4"></line>
-      </g>
-    </svg>
-    <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M20.5 14.7A8.5 8.5 0 1 1 9.3 3.5a7 7 0 0 0 11.2 11.2Z"></path>
-    </svg>
-  </button>
-
-  <section id="help-popover" class="help-popover" role="dialog" aria-modal="false"
-           aria-label="Instructions and keyboard shortcuts" aria-hidden="true">
-    <button id="help-close" class="icon-btn help-close" type="button" aria-label="Close">&times;</button>
-    <h2 class="help-title">How to use</h2>
-    <p class="help-text">Click or tap anywhere to start or stop the beat.</p>
-    <ul class="help-shortcuts">
-      <li><kbd>Space</kbd><span>start / stop</span></li>
-      <li><kbd>&larr;</kbd><kbd>&rarr;</kbd><span>tempo &plusmn;1 (&plusmn;5 with Shift)</span></li>
-      <li><kbd>&uarr;</kbd><kbd>&darr;</kbd><span>beats per bar</span></li>
-      <li><kbd>T</kbd><span>tap tempo</span></li>
-    </ul>
-    <p class="help-tip"><kbd>WASD</kbd> / <kbd>HJKL</kbd> also supported</p>
-  </section>
-
   <div class="hero">
   <main id="tap-zone" class="tap-zone" role="button" tabindex="0" aria-pressed="false"
         aria-label="Tap, click, or press space to start or stop the metronome">
-    <div class="tempo-marking">
-      <p id="marking-name" class="marking-name">Moderato</p>
+    <hgroup class="tempo-marking">
+      <h1 id="marking-name" class="marking-name">Moderato</h1>
       <p id="marking-gloss" class="marking-gloss">at a moderate pace</p>
-    </div>
+    </hgroup>
 
     <div id="pendulum-stage" class="pendulum-stage" aria-hidden="true">
       <div class="pendulum-shadow"></div>
@@ -87,10 +37,10 @@ app.innerHTML = `
     </div>
     <p id="tap-state" class="tap-state">tap to start</p>
 
-    <div class="bpm-display">
+    <output class="bpm-display" for="bpm-slider" aria-live="off">
       <span id="bpm-number" class="bpm-number">96</span>
       <span class="bpm-unit">BPM</span>
-    </div>
+    </output>
 
     <div id="beat-dots" class="beat-dots" aria-hidden="true"></div>
   </main>
@@ -132,12 +82,12 @@ linksSection.id = "links";
 linksSection.className = "links-section";
 linksSection.innerHTML = `
   <div class="links-inner">
-    <div class="colophon">
-      <p class="colophon-name">Just a Metronome</p>
+    <hgroup class="colophon">
+      <h2 class="colophon-name">Just a Metronome</h2>
       <p class="colophon-gloss">no ads. no subscriptions. just a metronome.</p>
-    </div>
-    <div class="hairline"></div>
-    <div class="link-row">
+    </hgroup>
+    <hr class="hairline">
+    <nav class="link-row" aria-label="Links">
     <a class="link-card" href="https://github.com/blackzarifa/just-a-metronome"
        target="_blank" rel="noopener noreferrer">
       <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -168,10 +118,13 @@ linksSection.innerHTML = `
         <span class="link-sub">If it helped</span>
       </div>
     </a>
-    </div>
+    </nav>
   </div>
 `;
 document.body.appendChild(linksSection);
+
+const cornerControls = createCornerControls();
+app.querySelector(".hero")!.before(cornerControls.el);
 
 const tapZoneEl = document.querySelector<HTMLElement>("#tap-zone")!;
 const tapStateEl = document.querySelector<HTMLElement>("#tap-state")!;
@@ -187,10 +140,6 @@ const beatsNumberEl = document.querySelector<HTMLElement>("#beats-number")!;
 const beatsMinusEl = document.querySelector<HTMLButtonElement>("#beats-minus")!;
 const beatsPlusEl = document.querySelector<HTMLButtonElement>("#beats-plus")!;
 const tapButtonEl = document.querySelector<HTMLButtonElement>("#tap-button")!;
-const themeToggleEl = document.querySelector<HTMLButtonElement>("#theme-toggle")!;
-const helpToggleEl = document.querySelector<HTMLButtonElement>("#help-toggle")!;
-const helpPopoverEl = document.querySelector<HTMLElement>("#help-popover")!;
-const helpCloseEl = document.querySelector<HTMLButtonElement>("#help-close")!;
 const scrollHintEl = document.querySelector<HTMLAnchorElement>("#scroll-hint")!;
 
 // Always open on the metronome (first screen). The browser otherwise restores
@@ -277,35 +226,6 @@ function pulseTapButton(): void {
   tapButtonEl.classList.add("pulse");
 }
 
-function openHelp(): void {
-  helpPopoverEl.classList.add("is-open");
-  helpPopoverEl.setAttribute("aria-hidden", "false");
-  helpToggleEl.setAttribute("aria-expanded", "true");
-  helpCloseEl.focus();
-}
-
-function closeHelp(returnFocus: boolean): void {
-  if (!helpPopoverEl.classList.contains("is-open")) return;
-  helpPopoverEl.classList.remove("is-open");
-  helpPopoverEl.setAttribute("aria-hidden", "true");
-  helpToggleEl.setAttribute("aria-expanded", "false");
-  if (returnFocus) helpToggleEl.focus();
-}
-
-function toggleHelp(): void {
-  if (helpPopoverEl.classList.contains("is-open")) closeHelp(true);
-  else openHelp();
-}
-
-function setTheme(theme: Theme): void {
-  document.documentElement.setAttribute("data-theme", theme);
-  themeToggleEl.setAttribute(
-    "aria-label",
-    theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
-  );
-  saveTheme(theme);
-}
-
 // --- wire up interactions ---
 
 // Anywhere on the page starts/stops the beat, except the control panel and
@@ -317,8 +237,8 @@ function setTheme(theme: Theme): void {
 app.addEventListener("click", e => {
   const target = e.target as HTMLElement;
   if (target.closest(".control-panel") || target.closest(".corner-btn") || target.closest(".scroll-hint")) return;
-  if (helpPopoverEl.classList.contains("is-open")) {
-    if (!target.closest(".help-popover")) closeHelp(false);
+  if (cornerControls.isHelpOpen()) {
+    if (!target.closest(".help-popover")) cornerControls.closeHelp(false);
     return;
   }
   handleToggle();
@@ -348,26 +268,18 @@ tapButtonEl.addEventListener("click", () => {
   pulseTapButton();
 });
 
-themeToggleEl.addEventListener("click", () => {
-  const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-  setTheme(current === "dark" ? "light" : "dark");
-});
-
-helpToggleEl.addEventListener("click", toggleHelp);
-helpCloseEl.addEventListener("click", () => closeHelp(true));
-
 window.addEventListener("keydown", e => {
   const isButtonFocused = document.activeElement instanceof HTMLButtonElement;
   const key = e.key;
 
   if (key === "Escape") {
-    closeHelp(true);
+    cornerControls.closeHelp(true);
     return;
   }
 
   if (key === "?") {
     e.preventDefault();
-    toggleHelp();
+    cornerControls.toggleHelp();
     return;
   }
 
