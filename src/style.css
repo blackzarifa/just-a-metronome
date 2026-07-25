@@ -22,7 +22,7 @@ body {
      its footprint: the hint's own box reads them, and the short-viewport rule
      below adds them back as padding so the panel can't land underneath it. */
   --scroll-hint-size: 44px;
-  --scroll-hint-gap: 10px;
+  --scroll-hint-gap: var(--space-md);
 
   min-height: 100svh;
   display: flex;
@@ -30,8 +30,8 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: calc(28px + env(safe-area-inset-top)) 24px
-    calc(28px + env(safe-area-inset-bottom));
+  padding: calc(var(--space-3xl) + env(safe-area-inset-top)) var(--space-2xl)
+    calc(var(--space-3xl) + env(safe-area-inset-bottom));
   overflow: hidden;
   cursor: pointer;
 }
@@ -65,8 +65,8 @@ body {
   color: var(--text-muted);
   cursor: pointer;
   transition:
-    opacity 0.4s,
-    color 0.2s;
+    opacity var(--dur-slower),
+    color var(--dur-slow);
   /* A few bobs to draw the eye, then it rests so it stops nagging.
      Ends on the 0%/100% keyframe (no offset), i.e. at rest. */
   animation: scroll-bob 1.4s ease-in-out 5 0.5s both;
@@ -144,7 +144,12 @@ body.has-scrolled .scroll-hint {
        (it's out of flow, so it claims no space on its own). Desktop and
        taller phones keep the centered layout above. */
     justify-content: flex-end;
-    padding: calc(58px + env(safe-area-inset-top)) 24px
+    /* The 58px top is deliberately NOT snapped to the spacing scale. This
+       whole block only applies under 700px tall, which has never been
+       verified on a real short viewport (see HANDOFF.md open item 3), and
+       changing an untested clearance value blind is worse than an off-scale
+       number. Snap it once someone can actually look at it on a phone. */
+    padding: calc(58px + env(safe-area-inset-top)) var(--space-2xl)
       calc(
         var(--scroll-hint-size) + var(--scroll-hint-gap) +
           env(safe-area-inset-bottom)

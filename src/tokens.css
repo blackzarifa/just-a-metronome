@@ -1,3 +1,47 @@
+/* The scale. Spacing is a 4px grid with 2px/6px fine steps for the places
+   where 4px is too coarse (icon-to-label gaps, chip padding). Anything laid
+   out in the page — gap, padding, margin — comes from here, so vertical and
+   horizontal rhythm stay in step instead of each rule inventing its own
+   number. Deliberately NOT in this scale:
+     - element sizes (the 34px button, 44px hint, 38px tap button, 168/280px
+       cards): those answer to touch targets and content, not to a grid;
+     - font sizes: type wants a type scale, which is a separate axis;
+     - one-off geometry (pendulum rod, slider track) that already derives
+       from its own component-local variables. */
+:root {
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 6px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 28px;
+  --space-4xl: 32px;
+  --space-5xl: 40px;
+  --space-6xl: 48px;
+
+  /* Corner radii climb with the size of the box they're on: chips and inputs
+     take -sm, the popover and cards -lg, the big control panel -xl. */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* -fast is for a press (must feel instant), -base for hover/colour, -slow
+     for something the eye should follow, -slower for a fade-out. */
+  --dur-fast: 0.1s;
+  --dur-base: 0.15s;
+  --dur-slow: 0.2s;
+  --dur-slower: 0.4s;
+
+  /* Decelerating ease used by everything that settles into place: the
+     pendulum's rest, the popover's open, the slider thumb's grow. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* Theme tokens. Every color in the app resolves through one of these, so
    the dark theme below is a pure value swap — no component ever branches on
    the theme itself. Soft gradient surface, ambient glow behind the pendulum,

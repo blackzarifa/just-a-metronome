@@ -2,7 +2,7 @@
    popover hangs off this element, so it inherits the value rather than
    restating "44px" as a hand-doubled literal in its width. */
 .corner-controls {
-  --corner-inset: 22px;
+  --corner-inset: var(--space-2xl);
 
   position: fixed;
   top: max(20px, env(safe-area-inset-top));
@@ -10,7 +10,7 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-md);
 }
 
 /* .corner-btn carries no styling of its own — the corner buttons are exactly
@@ -70,23 +70,23 @@
    instead of a full-screen modal. Uses the shared .panel glass. */
 .help-popover {
   --close-size: 32px;
-  --close-inset: 8px;
+  --close-inset: var(--space-sm);
 
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + var(--space-md));
   right: 0;
   z-index: 9;
   width: min(300px, calc(100vw - var(--corner-inset) * 2));
-  padding: 18px 20px 20px;
-  border-radius: 20px;
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
   cursor: default;
   transform-origin: top right;
   opacity: 0;
   transform: scale(0.94) translateY(-6px);
   pointer-events: none;
   transition:
-    opacity 0.16s ease,
-    transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--dur-base) ease,
+    transform var(--dur-base) var(--ease-out);
 }
 
 .help-popover.is-open {
@@ -111,7 +111,7 @@
      padding — the two don't share an origin. Making the title and the close
      button a flex row would remove the need for it, but that moves the
      button to the content edge, so it's deferred (see HANDOFF.md). */
-  margin: 0 36px 8px 0;
+  margin: 0 36px var(--space-sm) 0;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 15px;
@@ -119,7 +119,7 @@
 }
 
 .help-text {
-  margin: 0 0 14px;
+  margin: 0 0 var(--space-lg);
   font-size: 13px;
   line-height: 1.5;
   color: var(--text-muted);
@@ -131,13 +131,13 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: var(--space-sm);
 }
 
 .help-shortcuts li {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   font-size: 13px;
   color: var(--text-muted);
 }
@@ -145,7 +145,7 @@
 /* Extra room after the last key in a row, so "←→" reads as one pair
    before its description rather than running into it. */
 .help-shortcuts span {
-  margin-left: 4px;
+  margin-left: var(--space-2xs);
 }
 
 .help-shortcuts kbd,
@@ -155,8 +155,8 @@
   font-weight: 600;
   min-width: 17px;
   height: 18px;
-  padding: 0 5px;
-  border-radius: 6px;
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -166,12 +166,12 @@
 }
 
 .help-tip {
-  margin: 14px 0 0;
-  padding-top: 20px;
+  margin: var(--space-lg) 0 0;
+  padding-top: var(--space-xl);
   border-top: 1px solid var(--panel-border);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
   font-size: 12px;
   color: var(--text-muted);
 }

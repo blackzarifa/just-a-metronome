@@ -2,14 +2,15 @@
   min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: 40px 24px calc(48px + env(safe-area-inset-bottom));
+  padding: var(--space-5xl) var(--space-2xl)
+    calc(var(--space-6xl) + env(safe-area-inset-bottom));
 }
 
 .links-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: var(--space-3xl);
   width: 100%;
   max-width: 480px;
 }
@@ -23,7 +24,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .colophon-name {
@@ -54,7 +55,7 @@
 
 .link-row {
   display: flex;
-  gap: 20px;
+  gap: var(--space-xl);
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -67,15 +68,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-md);
   width: 168px;
-  padding: 28px 20px 24px;
-  border-radius: 20px;
+  padding: var(--space-3xl) var(--space-xl) var(--space-2xl);
+  border-radius: var(--radius-lg);
   color: var(--text);
   text-decoration: none;
   transition:
-    transform 0.18s ease,
-    border-color 0.18s;
+    transform var(--dur-slow) ease,
+    border-color var(--dur-slow);
 }
 
 .link-card:hover {
@@ -106,7 +107,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: var(--space-2xs);
 }
 
 .link-label {
@@ -125,14 +126,14 @@
 @media (min-width: 900px) {
   .links-inner {
     max-width: 620px;
-    gap: 40px;
+    gap: var(--space-5xl);
   }
 
   .link-card {
     width: 280px;
-    padding: 32px 28px 28px;
-    gap: 14px;
-    border-radius: 24px;
+    padding: var(--space-4xl) var(--space-3xl) var(--space-3xl);
+    gap: var(--space-lg);
+    border-radius: var(--radius-xl);
     flex-direction: row;
     justify-content: flex-start;
     text-align: left;

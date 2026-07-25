@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(20px, 3.6vh, 34px);
+  gap: clamp(var(--space-xl), 3.6vh, var(--space-4xl));
 }
 
 .tap-zone {
@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(14px, 2.6vh, 24px);
+  gap: clamp(var(--space-lg), 2.6vh, var(--space-2xl));
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -31,7 +31,7 @@
 .tap-zone:focus-visible .tempo-marking {
   outline: var(--focus-ring);
   outline-offset: 12px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
 }
 
 .tempo-marking {
@@ -39,7 +39,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: var(--space-2xs);
 }
 
 .marking-name {
@@ -119,14 +119,14 @@
 
 .pendulum-stage.is-resting .pendulum-arm,
 .pendulum-stage.is-resting .pendulum-shadow {
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.55s var(--ease-out);
 }
 
 .pendulum-rod {
   position: absolute;
   inset: 0;
   background: var(--wand);
-  border-radius: 2px;
+  border-radius: var(--rod-width);
 }
 
 .pendulum-bob {
@@ -150,7 +150,7 @@
   font-size: 13px;
   letter-spacing: 0.02em;
   color: var(--text-muted);
-  transition: color 0.2s;
+  transition: color var(--dur-slow);
   min-height: 1em;
 }
 
@@ -161,7 +161,7 @@
 .bpm-display {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .bpm-number {
@@ -187,7 +187,7 @@
 .beat-dots {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-md);
   min-height: 12px;
 }
 
@@ -197,8 +197,8 @@
   border-radius: 50%;
   background: var(--dot-idle);
   transition:
-    background 0.09s ease,
-    transform 0.09s ease;
+    background var(--dur-fast) ease,
+    transform var(--dur-fast) ease;
 }
 
 .beat-dot.is-accent {
@@ -216,18 +216,18 @@
   position: relative;
   z-index: 5;
   width: min(520px, 100%);
-  padding: 20px 26px 18px;
-  border-radius: 24px;
+  padding: var(--space-xl) var(--space-2xl);
+  border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-lg);
   cursor: default;
 }
 
 .control-row {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-lg);
 }
 
 /* Track and thumb geometry live here so the four thumb rules below (two
@@ -270,7 +270,7 @@
 .tempo-slider:focus-visible {
   outline: var(--focus-ring);
   outline-offset: 4px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 /* Chromium paints the fill itself (hence the two-stop gradient driven by
@@ -310,7 +310,7 @@
   appearance: none;
   width: var(--thumb-w);
   height: var(--thumb-h);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--thumb-face);
   border: none;
   box-shadow: var(--thumb-shadow);
@@ -319,30 +319,30 @@
      track's top edge, Firefox centres it for us. */
   margin-top: calc((var(--track-h) - var(--thumb-h)) / 2);
   transition:
-    transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.15s,
-    box-shadow 0.15s;
+    transform var(--dur-base) var(--ease-out),
+    background var(--dur-base),
+    box-shadow var(--dur-base);
 }
 
 .tempo-slider::-moz-range-thumb {
   width: var(--thumb-w);
   height: var(--thumb-h);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--thumb-face);
   border: none;
   box-shadow: var(--thumb-shadow);
   transform: scale(var(--thumb-scale));
   transition:
-    transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.15s,
-    box-shadow 0.15s;
+    transform var(--dur-base) var(--ease-out),
+    background var(--dur-base),
+    box-shadow var(--dur-base);
 }
 
 .beats-control {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-md);
 }
 
 /* Fixed width so stepping from 9 to 10 beats doesn't shove the +/- buttons
@@ -366,8 +366,8 @@
 
   flex: 1 1 auto;
   height: 38px;
-  padding: 0 22px;
-  border-radius: 999px;
+  padding: 0 var(--space-2xl);
+  border-radius: var(--radius-full);
   font-family: var(--sans);
   font-weight: 700;
   font-size: 13px;
@@ -377,7 +377,7 @@
 /* Restarts on every tap (main.ts forces a reflow between removals), giving
    each tap its own press even when they come faster than the animation. */
 .tap-button.pulse {
-  animation: tap-pulse 0.1s ease-out;
+  animation: tap-pulse var(--dur-fast) ease-out;
 }
 
 @keyframes tap-pulse {
@@ -393,11 +393,11 @@
    why these floors exist. */
 @media (max-height: 700px) {
   .hero {
-    gap: clamp(12px, 2.7vh, 34px);
+    gap: clamp(var(--space-md), 2.7vh, var(--space-4xl));
   }
 
   .tap-zone {
-    gap: clamp(10px, 2.2vh, 20px);
+    gap: clamp(var(--space-md), 2.2vh, var(--space-xl));
   }
 
   .pendulum-stage {
@@ -409,7 +409,7 @@
   }
 
   .control-panel {
-    padding: 18px 22px 16px;
-    gap: 14px;
+    padding: var(--space-xl) var(--space-2xl) var(--space-lg);
+    gap: var(--space-lg);
   }
 }
