@@ -1,5 +1,3 @@
-/* ---------- corner controls: theme toggle + help toggle + help popover ---------- */
-
 .corner-controls {
   position: fixed;
   top: max(20px, env(safe-area-inset-top));

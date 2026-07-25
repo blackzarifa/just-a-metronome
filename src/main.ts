@@ -4,6 +4,7 @@ import { Pendulum } from "./pendulum";
 import { tempoMarkingFor } from "./tempo";
 import { createCornerControls } from "./components/corner-controls";
 import { createLinksSection } from "./components/links-section";
+import { createHero } from "./components/hero";
 import {
   loadState,
   saveBpm,
@@ -20,52 +21,6 @@ app.innerHTML = `
   <div class="backdrop-grain" aria-hidden="true"></div>
   <div class="backdrop-glow" aria-hidden="true"></div>
 
-  <div class="hero">
-  <main id="tap-zone" class="tap-zone" role="button" tabindex="0" aria-pressed="false"
-        aria-label="Tap, click, or press space to start or stop the metronome">
-    <hgroup class="tempo-marking">
-      <h1 id="marking-name" class="marking-name">Moderato</h1>
-      <p id="marking-gloss" class="marking-gloss">at a moderate pace</p>
-    </hgroup>
-
-    <div id="pendulum-stage" class="pendulum-stage" aria-hidden="true">
-      <div class="pendulum-shadow"></div>
-      <div class="pendulum-pivot"></div>
-      <div class="pendulum-arm">
-        <div class="pendulum-rod"></div>
-        <div class="pendulum-bob"></div>
-      </div>
-    </div>
-    <p id="tap-state" class="tap-state">tap to start</p>
-
-    <output class="bpm-display" for="bpm-slider" aria-live="off">
-      <span id="bpm-number" class="bpm-number">96</span>
-      <span class="bpm-unit">BPM</span>
-    </output>
-
-    <div id="beat-dots" class="beat-dots" aria-hidden="true"></div>
-  </main>
-
-  <section class="control-panel">
-    <div class="control-row">
-      <button id="bpm-minus" class="icon-btn" type="button" aria-label="Decrease tempo by 1 BPM">&minus;</button>
-      <input id="bpm-slider" class="tempo-slider" type="range"
-             min="${MIN_BPM}" max="${MAX_BPM}" step="1" value="96"
-             aria-label="Tempo in beats per minute">
-      <button id="bpm-plus" class="icon-btn" type="button" aria-label="Increase tempo by 1 BPM">&plus;</button>
-    </div>
-
-    <div class="control-row secondary-row">
-      <button id="tap-button" class="tap-button" type="button">TAP</button>
-      <div class="beats-control" role="group" aria-label="Beats per bar">
-        <button id="beats-minus" class="icon-btn" type="button" aria-label="Decrease beats per bar">&minus;</button>
-        <span class="beats-value"><span id="beats-number" class="beats-number">4</span> beats</span>
-        <button id="beats-plus" class="icon-btn" type="button" aria-label="Increase beats per bar">&plus;</button>
-      </div>
-    </div>
-  </section>
-  </div>
-
   <div class="scroll-hint-region">
     <a id="scroll-hint" class="scroll-hint" href="#links"
        aria-label="More: source code and support">
@@ -81,23 +36,28 @@ app.innerHTML = `
 const linksSection = createLinksSection();
 document.body.appendChild(linksSection.el);
 
-const cornerControls = createCornerControls();
-app.querySelector(".hero")!.before(cornerControls.el);
+const hero = createHero();
+app.querySelector(".scroll-hint-region")!.before(hero.el);
 
-const tapZoneEl = document.querySelector<HTMLElement>("#tap-zone")!;
-const tapStateEl = document.querySelector<HTMLElement>("#tap-state")!;
-const pendulumStageEl = document.querySelector<HTMLElement>("#pendulum-stage")!;
-const bpmNumberEl = document.querySelector<HTMLElement>("#bpm-number")!;
-const markingNameEl = document.querySelector<HTMLElement>("#marking-name")!;
-const markingGlossEl = document.querySelector<HTMLElement>("#marking-gloss")!;
-const beatDotsEl = document.querySelector<HTMLElement>("#beat-dots")!;
-const bpmSliderEl = document.querySelector<HTMLInputElement>("#bpm-slider")!;
-const bpmMinusEl = document.querySelector<HTMLButtonElement>("#bpm-minus")!;
-const bpmPlusEl = document.querySelector<HTMLButtonElement>("#bpm-plus")!;
-const beatsNumberEl = document.querySelector<HTMLElement>("#beats-number")!;
-const beatsMinusEl = document.querySelector<HTMLButtonElement>("#beats-minus")!;
-const beatsPlusEl = document.querySelector<HTMLButtonElement>("#beats-plus")!;
-const tapButtonEl = document.querySelector<HTMLButtonElement>("#tap-button")!;
+const cornerControls = createCornerControls();
+hero.el.before(cornerControls.el);
+
+const {
+  tapZoneEl,
+  tapStateEl,
+  pendulumStageEl,
+  bpmNumberEl,
+  markingNameEl,
+  markingGlossEl,
+  beatDotsEl,
+  bpmSliderEl,
+  bpmMinusEl,
+  bpmPlusEl,
+  beatsNumberEl,
+  beatsMinusEl,
+  beatsPlusEl,
+  tapButtonEl,
+} = hero;
 const scrollHintEl = document.querySelector<HTMLAnchorElement>("#scroll-hint")!;
 
 // Always open on the metronome (first screen). The browser otherwise restores
@@ -183,8 +143,6 @@ function pulseTapButton(): void {
   void tapButtonEl.offsetWidth;
   tapButtonEl.classList.add("pulse");
 }
-
-// --- wire up interactions ---
 
 // Anywhere on the page starts/stops the beat, except the control panel and
 // corner buttons, which have their own click behavior — delegated on #app
@@ -284,8 +242,6 @@ function flashDueBeats(): void {
   }
   requestAnimationFrame(flashDueBeats);
 }
-
-// --- initial render ---
 
 applyBpm(bpm, false);
 applyBeatsPerBar(beatsPerBar, false);
