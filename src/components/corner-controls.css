@@ -69,6 +69,7 @@
 /* Instructions and keyboard shortcuts, flying out below the "?" button
    instead of a full-screen modal. Uses the shared .panel glass. */
 .help-popover {
+  --popover-pad: var(--space-xl);
   --close-size: 32px;
   --close-inset: var(--space-sm);
 
@@ -77,7 +78,7 @@
   right: 0;
   z-index: 9;
   width: min(300px, calc(100vw - var(--corner-inset) * 2));
-  padding: var(--space-xl);
+  padding: var(--popover-pad);
   border-radius: var(--radius-lg);
   cursor: default;
   transform-origin: top right;
@@ -95,23 +96,32 @@
   pointer-events: auto;
 }
 
+/* Title and close button share a flex row, so the browser keeps them clear
+   of each other — the title needs no clearance value of its own, and the
+   button can change size without anything else being updated by hand. */
+.help-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
 .icon-btn.help-close {
-  position: absolute;
-  top: var(--close-inset);
-  right: var(--close-inset);
   width: var(--close-size);
   height: var(--close-size);
   font-size: 17px;
+  /* In flow the button would land at the popover's content edge; this pulls
+     it back out to --close-inset from the popover's outer edge, which is
+     where a close affordance belongs. The same offset on top keeps the
+     button (32px) from making the row taller than the title (~22px), so
+     everything below the header stays put. */
+  margin: calc(var(--close-inset) - var(--popover-pad))
+    calc(var(--close-inset) - var(--popover-pad)) 0 0;
 }
 
 .help-title {
-  /* Hand-tuned clearance for the absolutely-positioned close button above.
-     It is not derived from --close-size/--close-inset because those measure
-     from the popover's border box while this margin starts inside its
-     padding — the two don't share an origin. Making the title and the close
-     button a flex row would remove the need for it, but that moves the
-     button to the content edge, so it's deferred (see HANDOFF.md). */
-  margin: 0 36px var(--space-sm) 0;
+  flex: 1;
+  margin: 0;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 15px;

@@ -96,12 +96,6 @@ body {
   }
 }
 
-/* Fade the hint out once the user has scrolled past the first screen. */
-body.has-scrolled .scroll-hint {
-  opacity: 0;
-  pointer-events: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .scroll-hint {
     animation: none;

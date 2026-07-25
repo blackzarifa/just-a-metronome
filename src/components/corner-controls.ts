@@ -49,8 +49,10 @@ export function createCornerControls(): CornerControls {
 
     <section id="help-popover" class="panel help-popover" role="dialog" aria-modal="false"
              aria-label="Instructions and keyboard shortcuts" aria-hidden="true">
-      <button id="help-close" class="btn icon-btn help-close" type="button" aria-label="Close">&times;</button>
-      <h2 class="help-title">How to use</h2>
+      <div class="help-header">
+        <h2 class="help-title">How to use</h2>
+        <button id="help-close" class="btn icon-btn help-close" type="button" aria-label="Close">&times;</button>
+      </div>
       <p class="help-text">Click or tap anywhere to start or stop the beat.</p>
       <ul class="help-shortcuts">
         <li><kbd>Space</kbd><span>start / stop</span></li>
