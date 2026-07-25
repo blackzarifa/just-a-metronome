@@ -1,0 +1,121 @@
+/* Theme tokens. Every color in the app resolves through one of these, so
+   the dark theme below is a pure value swap — no component ever branches on
+   the theme itself. Soft gradient surface, ambient glow behind the pendulum,
+   a glass control panel, and one blue accent. Adapted from a reference
+   mockup, wired to this app's own audio engine, pendulum math, keyboard
+   handling, and BPM sizing. */
+
+:root {
+  --bg-top: #f7f6f3;
+  --bg-bottom: #eae8e3;
+  --glow: oklch(70% 0.1 255 / 0.14);
+
+  --text: #1c1c1e;
+  --text-muted: rgba(28, 28, 30, 0.52);
+  --hairline: rgba(20, 20, 22, 0.08);
+
+  --accent: oklch(58% 0.16 255);
+  --accent-strong: oklch(50% 0.17 255);
+  --on-accent: #ffffff;
+
+  --track: rgba(0, 0, 0, 0.08);
+  --dot-idle: rgba(0, 0, 0, 0.14);
+
+  --btn-bg: rgba(0, 0, 0, 0.05);
+
+  /* Conic ring standing in for a border: bright on one side of the rim,
+     thinning to almost nothing on the opposite edge, instead of an even
+     outline. On this light background the "bright" side can't add much
+     contrast (it's already close to white), so unlike the dark theme's
+     version of this token, the definition here has to come mostly from
+     the shadow side — its alpha is boosted well past dark theme's
+     near-invisible 0.02 so the ring actually reads against a light
+     surface instead of blending into it. */
+  --btn-edge: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 0.9) 0deg,
+    rgba(255, 255, 255, 0.25) 55deg,
+    rgba(20, 20, 22, 0.16) 130deg,
+    rgba(20, 20, 22, 0.16) 230deg,
+    rgba(255, 255, 255, 0.12) 300deg,
+    rgba(255, 255, 255, 0.9) 360deg
+  );
+  --btn-edge-hover: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 1) 0deg,
+    rgba(255, 255, 255, 0.4) 55deg,
+    rgba(20, 20, 22, 0.22) 130deg,
+    rgba(20, 20, 22, 0.22) 230deg,
+    rgba(255, 255, 255, 0.22) 300deg,
+    rgba(255, 255, 255, 1) 360deg
+  );
+
+  --panel-bg: rgba(255, 255, 255, 0.5);
+  --panel-border: rgba(20, 20, 22, 0.08);
+  --panel-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+
+  --wand: linear-gradient(180deg, rgba(20, 20, 22, 0.45), rgba(20, 20, 22, 0.14));
+  --pivot: rgba(20, 20, 22, 0.3);
+  --orb: radial-gradient(circle at 32% 26%, #ffffff 0%, #dde0e4 35%, #a7adb5 68%, #666d75 100%);
+
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", serif;
+
+  /* The focus ring is one decision, applied identically everywhere. Only the
+     offset varies per control (it depends on how tight that control's own
+     box is), so offset stays local and the ring itself lives here. */
+  --focus-ring: 2px solid var(--accent);
+
+  color-scheme: light dark;
+  font: 16px/1.5 var(--sans);
+  color: var(--text);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme="dark"] {
+  --bg-top: #161618;
+  --bg-bottom: #0a0a0b;
+  --glow: oklch(62% 0.15 255 / 0.16);
+
+  --text: #f2f2f4;
+  --text-muted: rgba(242, 242, 244, 0.5);
+  --hairline: rgba(255, 255, 255, 0.09);
+
+  --accent: oklch(66% 0.16 255);
+  --accent-strong: oklch(72% 0.15 255);
+  --on-accent: #0c1220;
+
+  --track: rgba(255, 255, 255, 0.12);
+  --dot-idle: rgba(255, 255, 255, 0.16);
+
+  --btn-bg: rgba(255, 255, 255, 0.08);
+  --btn-edge: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 0.55) 0deg,
+    rgba(255, 255, 255, 0.16) 55deg,
+    rgba(255, 255, 255, 0.02) 130deg,
+    rgba(255, 255, 255, 0.02) 230deg,
+    rgba(255, 255, 255, 0.08) 300deg,
+    rgba(255, 255, 255, 0.55) 360deg
+  );
+  --btn-edge-hover: conic-gradient(
+    from 30deg,
+    rgba(255, 255, 255, 0.8) 0deg,
+    rgba(255, 255, 255, 0.3) 55deg,
+    rgba(255, 255, 255, 0.05) 130deg,
+    rgba(255, 255, 255, 0.05) 230deg,
+    rgba(255, 255, 255, 0.16) 300deg,
+    rgba(255, 255, 255, 0.8) 360deg
+  );
+
+  --panel-bg: rgba(255, 255, 255, 0.06);
+  --panel-border: rgba(255, 255, 255, 0.12);
+  --panel-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+
+  --wand: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.15));
+  --pivot: rgba(255, 255, 255, 0.35);
+  --orb: radial-gradient(circle at 32% 26%, #f6f7f9 0%, #cfd3d9 35%, #8b929c 68%, #4d525a 100%);
+}

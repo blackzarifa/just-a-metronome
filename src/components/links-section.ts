@@ -16,9 +16,9 @@ export function createLinksSection(): LinksSection {
       </hgroup>
       <hr class="hairline">
       <nav class="link-row" aria-label="Links">
-      <a class="link-card" href="https://github.com/blackzarifa/just-a-metronome"
+      <a class="panel link-card" href="https://github.com/blackzarifa/just-a-metronome"
          target="_blank" rel="noopener noreferrer">
-        <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="link-icon is-filled" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.48
                    0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62
                    1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07
@@ -32,7 +32,7 @@ export function createLinksSection(): LinksSection {
         </div>
       </a>
 
-      <a class="link-card" href="#" data-placeholder="donation"
+      <a class="panel link-card" href="#" data-placeholder="donation"
          target="_blank" rel="noopener noreferrer">
         <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 8h13a3 3 0 0 1 0 6h-1"></path>

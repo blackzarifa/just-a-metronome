@@ -21,12 +21,15 @@
   user-select: none;
 }
 
+/* The tap zone is most of the screen, so ringing it would ring the whole
+   viewport. The ring goes on the title instead — the one element that reads
+   as "this thing is focused" without outlining everything. */
 .tap-zone:focus-visible {
   outline: none;
 }
 
 .tap-zone:focus-visible .tempo-marking {
-  outline: 2px solid var(--accent);
+  outline: var(--focus-ring);
   outline-offset: 12px;
   border-radius: 14px;
 }
@@ -59,7 +62,13 @@
   color: var(--text-muted);
 }
 
+/* The arm hangs off the pivot and the rod is centred on it, so both of those
+   positions are derived from these rather than restated as literals — the
+   pivot's size can change without the arm detaching from it. */
 .pendulum-stage {
+  --pivot-size: 7px;
+  --rod-width: 2px;
+
   position: relative;
   width: 100%;
   height: clamp(170px, 26vh, 260px);
@@ -89,8 +98,8 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 7px;
-  height: 7px;
+  width: var(--pivot-size);
+  height: var(--pivot-size);
   border-radius: 50%;
   background: var(--pivot);
   z-index: 3;
@@ -98,10 +107,10 @@
 
 .pendulum-arm {
   position: absolute;
-  top: 7px;
+  top: var(--pivot-size);
   left: 50%;
-  margin-left: -1px;
-  width: 2px;
+  margin-left: calc(var(--rod-width) / -2);
+  width: var(--rod-width);
   height: 82%;
   transform-origin: top center;
   transform: rotate(var(--pendulum-angle, 0deg));
@@ -134,6 +143,8 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
+/* Reserves its own line height so the layout doesn't shift when the label
+   swaps between "tap to start" and "tap to stop". */
 .tap-state {
   margin: 0;
   font-size: 13px;
@@ -171,6 +182,8 @@
   color: var(--text-muted);
 }
 
+/* min-height holds the row open at the accent dot's size, so adding or
+   removing beats never nudges the layout above it. */
 .beat-dots {
   display: flex;
   align-items: center;
@@ -205,11 +218,6 @@
   width: min(520px, 100%);
   padding: 20px 26px 18px;
   border-radius: 24px;
-  background: var(--panel-bg);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  border: 1px solid var(--panel-border);
-  box-shadow: var(--panel-shadow);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -222,7 +230,20 @@
   gap: 14px;
 }
 
+/* Track and thumb geometry live here so the four thumb rules below (two
+   engines x two states) read them instead of each restating the numbers.
+   The thumb's colours are variables for the same reason: :active swaps the
+   values once, rather than re-declaring the whole thumb per engine. */
 .tempo-slider {
+  --track-h: 6px;
+  --thumb-w: 32px;
+  --thumb-h: 18px;
+  --thumb-face: linear-gradient(210deg, #ffffff 0%, #ffffff 45%, #d4d5d9 100%);
+  --thumb-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.35), inset 1px -1px 1px rgba(255, 255, 255, 0.9),
+    inset -1px 1px 2px rgba(0, 0, 0, 0.1);
+  --thumb-scale: 1;
+
   flex: 1 1 auto;
   -webkit-appearance: none;
   appearance: none;
@@ -233,15 +254,31 @@
   margin: 0;
 }
 
+.tempo-slider:active {
+  --thumb-face: linear-gradient(
+    210deg,
+    color-mix(in srgb, var(--accent) 55%, white 45%) 0%,
+    color-mix(in srgb, var(--accent) 70%, white 30%) 45%,
+    color-mix(in srgb, var(--accent) 80%, black 10%) 100%
+  );
+  --thumb-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4), inset 1px -1px 1px rgba(255, 255, 255, 0.7),
+    inset -1px 1px 2px rgba(0, 0, 0, 0.15);
+  --thumb-scale: 1.25;
+}
+
 .tempo-slider:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: var(--focus-ring);
   outline-offset: 4px;
   border-radius: 6px;
 }
 
+/* Chromium paints the fill itself (hence the two-stop gradient driven by
+   --fill from main.ts); Firefox has a real ::-moz-range-progress element, so
+   its track is plain and the fill is a separate rule. */
 .tempo-slider::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: 3px;
+  height: var(--track-h);
+  border-radius: calc(var(--track-h) / 2);
   background: linear-gradient(
     to right,
     var(--accent) 0%,
@@ -253,32 +290,34 @@
 }
 
 .tempo-slider::-moz-range-track {
-  height: 6px;
-  border-radius: 3px;
+  height: var(--track-h);
+  border-radius: calc(var(--track-h) / 2);
   background: var(--track);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .tempo-slider::-moz-range-progress {
-  height: 6px;
-  border-radius: 3px;
+  height: var(--track-h);
+  border-radius: calc(var(--track-h) / 2);
   background: var(--accent);
 }
 
+/* Solid pill, not glass: Firefox's ::-moz-range-progress has no CSS hook to
+   align a translucent thumb's colour seam with the track fill, so a glass
+   thumb is a platform dead end — don't re-attempt. */
 .tempo-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 32px;
-  height: 18px;
+  width: var(--thumb-w);
+  height: var(--thumb-h);
   border-radius: 999px;
-  background: linear-gradient(210deg, #ffffff 0%, #ffffff 45%, #d4d5d9 100%);
+  background: var(--thumb-face);
   border: none;
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.35),
-    inset 1px -1px 1px rgba(255, 255, 255, 0.9),
-    inset -1px 1px 2px rgba(0, 0, 0, 0.1);
-  /* Centers the 18px thumb over the 6px track: (trackHeight - thumbHeight) / 2. */
-  margin-top: -6px;
+  box-shadow: var(--thumb-shadow);
+  transform: scale(var(--thumb-scale));
+  /* Centres the thumb over the track; Chromium positions the thumb from the
+     track's top edge, Firefox centres it for us. */
+  margin-top: calc((var(--track-h) - var(--thumb-h)) / 2);
   transition:
     transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.15s,
@@ -286,47 +325,17 @@
 }
 
 .tempo-slider::-moz-range-thumb {
-  width: 32px;
-  height: 18px;
+  width: var(--thumb-w);
+  height: var(--thumb-h);
   border-radius: 999px;
-  background: linear-gradient(210deg, #ffffff 0%, #ffffff 45%, #d4d5d9 100%);
+  background: var(--thumb-face);
   border: none;
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.35),
-    inset 1px -1px 1px rgba(255, 255, 255, 0.9),
-    inset -1px 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--thumb-shadow);
+  transform: scale(var(--thumb-scale));
   transition:
     transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.15s,
     box-shadow 0.15s;
-}
-
-.tempo-slider:active::-webkit-slider-thumb {
-  transform: scale(1.25);
-  background: linear-gradient(
-    210deg,
-    color-mix(in srgb, var(--accent) 55%, white 45%) 0%,
-    color-mix(in srgb, var(--accent) 70%, white 30%) 45%,
-    color-mix(in srgb, var(--accent) 80%, black 10%) 100%
-  );
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    inset 1px -1px 1px rgba(255, 255, 255, 0.7),
-    inset -1px 1px 2px rgba(0, 0, 0, 0.15);
-}
-
-.tempo-slider:active::-moz-range-thumb {
-  transform: scale(1.25);
-  background: linear-gradient(
-    210deg,
-    color-mix(in srgb, var(--accent) 55%, white 45%) 0%,
-    color-mix(in srgb, var(--accent) 70%, white 30%) 45%,
-    color-mix(in srgb, var(--accent) 80%, black 10%) 100%
-  );
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    inset 1px -1px 1px rgba(255, 255, 255, 0.7),
-    inset -1px 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .beats-control {
@@ -336,6 +345,8 @@
   gap: 10px;
 }
 
+/* Fixed width so stepping from 9 to 10 beats doesn't shove the +/- buttons
+   sideways. */
 .beats-value {
   min-width: 56px;
   text-align: center;
@@ -351,73 +362,35 @@
 }
 
 .tap-button {
-  position: relative;
+  --btn-press: 0.96;
+
   flex: 1 1 auto;
   height: 38px;
   padding: 0 22px;
   border-radius: 999px;
-  border: 1px solid transparent;
-  background: var(--btn-bg);
-  color: var(--text);
   font-family: var(--sans);
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.14em;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    transform 0.1s;
 }
 
-.tap-button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: var(--btn-edge);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  transition: background 0.15s;
-}
-
-.tap-button:hover::before {
-  background: var(--btn-edge-hover);
-}
-
-.tap-button:active {
-  transform: scale(0.96);
-}
-
-.tap-button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
+/* Restarts on every tap (main.ts forces a reflow between removals), giving
+   each tap its own press even when they come faster than the animation. */
 .tap-button.pulse {
   animation: tap-pulse 0.1s ease-out;
 }
 
 @keyframes tap-pulse {
   0% {
-    transform: scale(0.96);
+    transform: scale(var(--btn-press));
   }
   100% {
     transform: scale(1);
   }
 }
 
-/* ---------- short viewports (small phones) ----------
-   The default sizing has several px floors (pendulum-stage
-   height, gaps, padding) that stop shrinking once vh-based
-   values drop below them, which is fine down to normal phone
-   heights but overflows 100svh on short screens (e.g. 360x568)
-   and makes the page scroll. This tightens those floors so the
-   whole layout keeps fitting in one screen. */
+/* Short viewports (small phones) — see the matching block in style.css for
+   why these floors exist. */
 @media (max-height: 700px) {
   .hero {
     gap: clamp(12px, 2.7vh, 34px);

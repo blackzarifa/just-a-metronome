@@ -59,7 +59,11 @@
   justify-content: center;
 }
 
+/* Lighter blur than the other panels: these sit over the page background
+   rather than over the pendulum, so there's less behind them to soften. */
 .link-card {
+  --panel-filter: blur(14px);
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,11 +71,6 @@
   width: 168px;
   padding: 28px 20px 24px;
   border-radius: 20px;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  box-shadow: var(--panel-shadow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   color: var(--text);
   text-decoration: none;
   transition:
@@ -95,8 +94,10 @@
   color: var(--text-muted);
 }
 
-/* GitHub mark is a filled glyph, not a stroked one. */
-.link-card:first-child .link-icon {
+/* The GitHub mark is a filled glyph, not a stroked one. Flagged by a class on
+   the icon rather than :first-child, so reordering the cards can't silently
+   move the fill onto a stroked icon. */
+.link-icon.is-filled {
   fill: var(--text-muted);
   stroke: none;
 }

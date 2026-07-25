@@ -1,0 +1,82 @@
+/* The two surface recipes the whole app is built from: a button and a glass
+   panel. Both were previously copy-pasted into every component that needed
+   them (the ring block alone existed three times, byte-identical), which made
+   the app's own design language impossible to change in one place. Components
+   now opt in with `class="btn ..."` / `class="panel ..."` and declare only
+   what actually differs — size, radius, typography. */
+
+/* Every button in the app: flat translucent fill plus a ::before ring. The
+   ring is a conic gradient masked to just the rim (two mask layers, the inner
+   one subtracted via mask-composite), simulating uneven light on a glass edge
+   — bright around the 30deg mark, clockwise from 12 o'clock. That light
+   direction is the app's convention; the slider thumb follows it too. */
+.btn {
+  position: relative;
+  border: 1px solid transparent;
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.2s,
+    transform 0.1s;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--btn-edge);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.15s;
+}
+
+.btn:hover::before {
+  background: var(--btn-edge-hover);
+}
+
+/* Pill buttons are wider, so the same scale factor reads as a bigger jump on
+   them than on a 34px circle — hence the per-button override rather than one
+   shared value. */
+.btn:active {
+  transform: scale(var(--btn-press, 0.92));
+}
+
+.btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* The circular button used for every +/- control and the popover's close
+   button, so the button language stays consistent and every control has a
+   clear edge. Shared by hero and corner-controls; the corner buttons are the
+   same circle, so they use this too rather than restating it. */
+.icon-btn {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Frosted glass, shared by the control panel, the help popover, and the link
+   cards. Radius stays with each component (it scales with the component's
+   size), and --panel-filter lets a component dial the blur down without
+   restating the whole recipe. */
+.panel {
+  background: var(--panel-bg);
+  backdrop-filter: var(--panel-filter, blur(22px) saturate(140%));
+  -webkit-backdrop-filter: var(--panel-filter, blur(22px) saturate(140%));
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+}

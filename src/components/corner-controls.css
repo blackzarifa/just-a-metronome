@@ -1,58 +1,22 @@
+/* --corner-inset is the distance from the viewport's right edge, and the
+   popover hangs off this element, so it inherits the value rather than
+   restating "44px" as a hand-doubled literal in its width. */
 .corner-controls {
+  --corner-inset: 22px;
+
   position: fixed;
   top: max(20px, env(safe-area-inset-top));
-  right: 22px;
+  right: var(--corner-inset);
   z-index: 10;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.corner-btn {
-  position: relative;
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 1px solid transparent;
-  background: var(--btn-bg);
-  color: var(--text);
-  cursor: pointer;
-  transition:
-    color 0.2s,
-    background 0.2s,
-    transform 0.1s;
-}
-
-.corner-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: var(--btn-edge);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  transition: background 0.15s;
-}
-
-.corner-btn:hover::before {
-  background: var(--btn-edge-hover);
-}
-
-.corner-btn:active {
-  transform: scale(0.92);
-}
-
-.corner-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+/* .corner-btn carries no styling of its own — the corner buttons are exactly
+   the app's standard icon button (see primitives.css). The class stays
+   because main.ts's delegated click handler uses it to tell "a control was
+   clicked" from "the page was clicked to start the beat". */
 
 /* Keyboard shortcuts don't apply on touch devices, so the button
    pointing to them shouldn't either. */
@@ -72,6 +36,8 @@
   stroke-linejoin: round;
 }
 
+/* Both icons occupy the same grid cell so the button doesn't resize or
+   reflow when the theme swaps which one is visible. */
 .theme-toggle .icon {
   width: 17px;
   height: 17px;
@@ -100,23 +66,19 @@
   display: block;
 }
 
-/* ---------- help popover: instructions + keyboard shortcuts,
-   flies out below the "?" button instead of a full-screen modal.
-   Same frosted-glass treatment the bottom control panel uses. ---------- */
-
+/* Instructions and keyboard shortcuts, flying out below the "?" button
+   instead of a full-screen modal. Uses the shared .panel glass. */
 .help-popover {
+  --close-size: 32px;
+  --close-inset: 8px;
+
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
   z-index: 9;
-  width: min(300px, calc(100vw - 44px));
+  width: min(300px, calc(100vw - var(--corner-inset) * 2));
   padding: 18px 20px 20px;
   border-radius: 20px;
-  background: var(--panel-bg);
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
-  border: 1px solid var(--panel-border);
-  box-shadow: var(--panel-shadow);
   cursor: default;
   transform-origin: top right;
   opacity: 0;
@@ -135,14 +97,20 @@
 
 .icon-btn.help-close {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
+  top: var(--close-inset);
+  right: var(--close-inset);
+  width: var(--close-size);
+  height: var(--close-size);
   font-size: 17px;
 }
 
 .help-title {
+  /* Hand-tuned clearance for the absolutely-positioned close button above.
+     It is not derived from --close-size/--close-inset because those measure
+     from the popover's border box while this margin starts inside its
+     padding — the two don't share an origin. Making the title and the close
+     button a flex row would remove the need for it, but that moves the
+     button to the content edge, so it's deferred (see HANDOFF.md). */
   margin: 0 36px 8px 0;
   font-family: var(--sans);
   font-weight: 600;
@@ -174,6 +142,8 @@
   color: var(--text-muted);
 }
 
+/* Extra room after the last key in a row, so "←→" reads as one pair
+   before its description rather than running into it. */
 .help-shortcuts span {
   margin-left: 4px;
 }

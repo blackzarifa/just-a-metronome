@@ -48,21 +48,21 @@ export function createHero(): Hero {
       <div id="beat-dots" class="beat-dots" aria-hidden="true"></div>
     </main>
 
-    <section class="control-panel">
+    <section class="panel control-panel">
       <div class="control-row">
-        <button id="bpm-minus" class="icon-btn" type="button" aria-label="Decrease tempo by 1 BPM">&minus;</button>
+        <button id="bpm-minus" class="btn icon-btn" type="button" aria-label="Decrease tempo by 1 BPM">&minus;</button>
         <input id="bpm-slider" class="tempo-slider" type="range"
                min="${MIN_BPM}" max="${MAX_BPM}" step="1" value="96"
                aria-label="Tempo in beats per minute">
-        <button id="bpm-plus" class="icon-btn" type="button" aria-label="Increase tempo by 1 BPM">&plus;</button>
+        <button id="bpm-plus" class="btn icon-btn" type="button" aria-label="Increase tempo by 1 BPM">&plus;</button>
       </div>
 
-      <div class="control-row secondary-row">
-        <button id="tap-button" class="tap-button" type="button">TAP</button>
+      <div class="control-row">
+        <button id="tap-button" class="btn tap-button" type="button">TAP</button>
         <div class="beats-control" role="group" aria-label="Beats per bar">
-          <button id="beats-minus" class="icon-btn" type="button" aria-label="Decrease beats per bar">&minus;</button>
+          <button id="beats-minus" class="btn icon-btn" type="button" aria-label="Decrease beats per bar">&minus;</button>
           <span class="beats-value"><span id="beats-number" class="beats-number">4</span> beats</span>
-          <button id="beats-plus" class="icon-btn" type="button" aria-label="Increase beats per bar">&plus;</button>
+          <button id="beats-plus" class="btn icon-btn" type="button" aria-label="Increase beats per bar">&plus;</button>
         </div>
       </div>
     </section>

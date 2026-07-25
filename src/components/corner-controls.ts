@@ -12,7 +12,7 @@ export function createCornerControls(): CornerControls {
   const el = document.createElement("div");
   el.className = "corner-controls";
   el.innerHTML = `
-    <button id="help-toggle" class="corner-btn help-toggle" type="button"
+    <button id="help-toggle" class="btn icon-btn corner-btn help-toggle" type="button"
             aria-label="Show instructions and keyboard shortcuts" aria-haspopup="dialog" aria-expanded="false">
       <svg class="icon icon-help" viewBox="0 0 24 24" aria-hidden="true">
         <rect x="2.5" y="6" width="19" height="13" rx="2"></rect>
@@ -28,7 +28,7 @@ export function createCornerControls(): CornerControls {
       </svg>
     </button>
 
-    <button id="theme-toggle" class="corner-btn theme-toggle" type="button" aria-label="Switch to dark theme">
+    <button id="theme-toggle" class="btn icon-btn corner-btn theme-toggle" type="button" aria-label="Switch to dark theme">
       <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="4.2"></circle>
         <g class="sun-rays">
@@ -47,9 +47,9 @@ export function createCornerControls(): CornerControls {
       </svg>
     </button>
 
-    <section id="help-popover" class="help-popover" role="dialog" aria-modal="false"
+    <section id="help-popover" class="panel help-popover" role="dialog" aria-modal="false"
              aria-label="Instructions and keyboard shortcuts" aria-hidden="true">
-      <button id="help-close" class="icon-btn help-close" type="button" aria-label="Close">&times;</button>
+      <button id="help-close" class="btn icon-btn help-close" type="button" aria-label="Close">&times;</button>
       <h2 class="help-title">How to use</h2>
       <p class="help-text">Click or tap anywhere to start or stop the beat.</p>
       <ul class="help-shortcuts">
