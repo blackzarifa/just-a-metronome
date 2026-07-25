@@ -17,10 +17,9 @@ body {
 }
 
 #app {
-  /* The scroll hint sits outside the flex flow (see .scroll-hint-region), so
-     nothing in flow reserves its space. These two are the single source for
-     its footprint: the hint's own box reads them, and the short-viewport rule
-     below adds them back as padding so the panel can't land underneath it. */
+  /* Single source for the scroll hint's footprint: the hint reads them, and
+     the short-viewport rule below adds them back as padding since the hint is
+     out of flow and reserves no space itself. */
   --scroll-hint-size: 44px;
   --scroll-hint-gap: var(--space-md);
 
@@ -36,14 +35,9 @@ body {
   cursor: pointer;
 }
 
-/* Absolutely positioned (not a flex child) so it never participates in
-   #app's centering — the hero block must center/pin exactly as it did
-   before this arrow existed. `bottom` on an absolutely positioned child
-   resolves against #app's padding-box edge, which already sits flush
-   with the true viewport edge, so this still touches bottom with zero
-   extra gap; and because #app scrolls out of flow normally (it's not
-   fixed), the arrow scrolls away with it once the links section is
-   reached, instead of staying pinned on top of that section. */
+/* Absolute, not a flex child, so it never shifts #app's centering. Absolute
+   (not fixed) so it scrolls away with #app instead of staying pinned over the
+   links section. */
 .scroll-hint-region {
   position: absolute;
   left: 0;
@@ -67,8 +61,7 @@ body {
   transition:
     opacity var(--dur-slower),
     color var(--dur-slow);
-  /* A few bobs to draw the eye, then it rests so it stops nagging.
-     Ends on the 0%/100% keyframe (no offset), i.e. at rest. */
+  /* A few bobs to draw the eye, then rest so it stops nagging. */
   animation: scroll-bob 1.4s ease-in-out 5 0.5s both;
 }
 
@@ -124,25 +117,18 @@ body {
   z-index: 0;
 }
 
-/* Short viewports (small phones). The default sizing has several px floors
-   (pendulum-stage height, gaps, padding) that stop shrinking once vh-based
-   values drop below them, which is fine down to normal phone heights but
-   overflows 100svh on short screens (e.g. 360x568) and makes the page
-   scroll. This tightens those floors so the whole layout keeps fitting in
-   one screen. Hero-specific floors live in components/hero.css alongside
-   the rest of the hero. */
+/* Short viewports (small phones). Several px floors stop shrinking once
+   vh-based values drop below them, which overflows 100svh around 360x568 and
+   makes the page scroll; this tightens them. Hero-specific floors live in
+   components/hero.css. */
 @media (max-height: 700px) {
   #app {
-    /* Pin .hero to the bottom so any leftover height goes above the title
-       instead of below the panel, and reserve the scroll hint's footprint
-       (it's out of flow, so it claims no space on its own). Desktop and
-       taller phones keep the centered layout above. */
+    /* Pin .hero to the bottom so leftover height goes above the title, and
+       reserve the out-of-flow scroll hint's footprint. */
     justify-content: flex-end;
-    /* The 58px top is deliberately NOT snapped to the spacing scale. This
-       whole block only applies under 700px tall, which has never been
-       verified on a real short viewport (see HANDOFF.md open item 3), and
-       changing an untested clearance value blind is worse than an off-scale
-       number. Snap it once someone can actually look at it on a phone. */
+    /* 58px is deliberately off the spacing scale: this block has never been
+       verified on a real sub-700px viewport, and changing an untested
+       clearance blind is worse than an off-scale number. */
     padding: calc(58px + env(safe-area-inset-top)) var(--space-2xl)
       calc(
         var(--scroll-hint-size) + var(--scroll-hint-gap) +

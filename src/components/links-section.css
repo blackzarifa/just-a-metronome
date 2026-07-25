@@ -15,10 +15,6 @@
   max-width: 480px;
 }
 
-/* Two small cards alone on a wide screen read as unfinished — this gives
-   the second screen its own anchor (name + one-line pitch, echoing the
-   .marking-name/.marking-gloss voice from the first screen) so the row
-   of links sits under something, instead of floating by itself. */
 .colophon {
   text-align: center;
   display: flex;
@@ -95,9 +91,6 @@
   color: var(--text-muted);
 }
 
-/* The GitHub mark is a filled glyph, not a stroked one. Flagged by a class on
-   the icon rather than :first-child, so reordering the cards can't silently
-   move the fill onto a stroked icon. */
 .link-icon.is-filled {
   fill: var(--text-muted);
   stroke: none;
@@ -112,9 +105,8 @@
 
 /* One step above .link-sub, and no higher: the 168px card leaves 128px of
    content box, which Chrome floors to 126, and "Buy me a coffee" needs 126.7px
-   at -lg. That extra step would wrap it to a second line and grow both cards
-   by 24px, so the card width — not the scale — sets the ceiling here. The
-   wide breakpoint below has 240px to work with and takes that step. */
+   at -lg — it would wrap and grow both cards by 24px. The card width, not the
+   scale, sets the ceiling here. */
 .link-label {
   font-size: var(--type-md);
   font-weight: 600;
@@ -126,8 +118,6 @@
   color: var(--text-muted);
 }
 
-/* The .colophon heading anchors the row, so cards stay side by side
-   (matching mobile) instead of stacking to avoid looking stranded. */
 @media (min-width: 900px) {
   .links-inner {
     max-width: 620px;
@@ -154,9 +144,6 @@
     align-items: flex-start;
   }
 
-  /* The wider card takes both lines one step up the scale together, so the
-     label keeps exactly the same lead over its sub-line at both breakpoints
-     instead of each size drifting on its own. */
   .link-label {
     font-size: var(--type-lg);
   }

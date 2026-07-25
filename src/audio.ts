@@ -1,8 +1,6 @@
-// Lookahead scheduler pattern (Chris Wilson, "A Tale of Two Clocks"):
-// a fast setInterval "ticks" the scheduler often, but the scheduler itself
-// only books work onto the Web Audio clock (audioCtx.currentTime), which is
-// sample-accurate. The click itself is always timed by the audio clock, not
-// by the interval callback, so setInterval jitter can never show up as drift.
+// Lookahead scheduler (Chris Wilson, "A Tale of Two Clocks"): setInterval only
+// books clicks onto the sample-accurate Web Audio clock, never sounds them, so
+// interval jitter can't show up as drift.
 const SCHEDULE_AHEAD_TIME = 0.1 // seconds: how far ahead we book clicks
 const LOOKAHEAD_MS = 25 // ms: how often the scheduler wakes up to book more
 const HISTORY_RETENTION_SECONDS = 4
@@ -100,7 +98,6 @@ export class MetronomeEngine {
     else this.start();
   }
 
-  /** Pops and returns any beats whose sound has already started by `now`. */
   drainDueBeats(now: number): ScheduledBeat[] {
     const due: ScheduledBeat[] = [];
     while (this.dueQueue.length && this.dueQueue[0].time <= now) {
@@ -110,9 +107,8 @@ export class MetronomeEngine {
   }
 
   /**
-   * Interpolation inputs for the pendulum: the beat that most recently
-   * started (or should have, extrapolating from tempo) and the one after
-   * it, so the caller can compute how far between the two `now` sits.
+   * Interpolation inputs for the pendulum: the beat that most recently started
+   * (extrapolating from tempo if needed) and the one after it.
    */
   getBracketingBeats(
     now: number,
@@ -129,12 +125,10 @@ export class MetronomeEngine {
     }
 
     if (prevIdx === -1) {
-      // Before the first beat has actually sounded, there's no real
-      // previous beat to bracket against. Fabricate one centered on the
-      // moment playback started (not a full interval before `next`) so the
-      // pendulum begins at rest (angle 0, f=0.5) and swings out to hit the
-      // first beat exactly at its extreme, instead of jumping straight to
-      // a near-extreme angle on the very first rendered frame.
+      // No real previous beat yet. Fabricate one centered on playback start
+      // (not a full interval before `next`) so the pendulum begins at rest
+      // and swings out to hit the first beat at its extreme, instead of
+      // jumping to a near-extreme angle on the first frame.
       const next = this.history[0]!;
       const prev: ScheduledBeat = {
         ...next,

@@ -22,8 +22,7 @@
 }
 
 /* The tap zone is most of the screen, so ringing it would ring the whole
-   viewport. The ring goes on the title instead — the one element that reads
-   as "this thing is focused" without outlining everything. */
+   viewport. The ring goes on the title instead. */
 .tap-zone:focus-visible {
   outline: none;
 }
@@ -62,9 +61,8 @@
   color: var(--text-muted);
 }
 
-/* The arm hangs off the pivot and the rod is centred on it, so both of those
-   positions are derived from these rather than restated as literals — the
-   pivot's size can change without the arm detaching from it. */
+/* The arm's offset and the rod's centring derive from these, so the pivot can
+   change size without the arm detaching from it. */
 .pendulum-stage {
   --pivot-size: 7px;
   --rod-width: 2px;
@@ -230,10 +228,9 @@
   gap: var(--space-lg);
 }
 
-/* Track and thumb geometry live here so the four thumb rules below (two
-   engines x two states) read them instead of each restating the numbers.
-   The thumb's colours are variables for the same reason: :active swaps the
-   values once, rather than re-declaring the whole thumb per engine. */
+/* Track and thumb geometry live here so the thumb rules below (two engines)
+   read them instead of restating the numbers, and :active swaps the colour
+   variables once instead of re-declaring the whole thumb per engine. */
 .tempo-slider {
   --track-h: 6px;
   --thumb-w: 32px;
@@ -353,8 +350,7 @@
 
 /* Reserves room for the two-digit maximum (12) so stepping 9 -> 10 doesn't
    widen the label and shove the +/- buttons sideways. tabular-nums makes every
-   digit the same width, so 2ch is exactly two digits — the previous 56px was
-   hand-measured and 5px too narrow, which meant it never actually held. */
+   digit the same width, so 2ch is exactly two digits. */
 .beats-number {
   display: inline-block;
   min-width: 2ch;
@@ -393,8 +389,6 @@
   }
 }
 
-/* Short viewports (small phones) — see the matching block in style.css for
-   why these floors exist. */
 @media (max-height: 700px) {
   .hero {
     gap: clamp(var(--space-md), 2.7vh, var(--space-4xl));

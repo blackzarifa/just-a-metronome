@@ -1,6 +1,3 @@
-/* --corner-inset is the distance from the viewport's right edge, and the
-   popover hangs off this element, so it inherits the value rather than
-   restating "44px" as a hand-doubled literal in its width. */
 .corner-controls {
   --corner-inset: var(--space-2xl);
 
@@ -66,8 +63,6 @@
   display: block;
 }
 
-/* Instructions and keyboard shortcuts, flying out below the "?" button
-   instead of a full-screen modal. Uses the shared .panel glass. */
 .help-popover {
   --popover-pad: var(--space-xl);
   --close-size: 32px;
@@ -96,9 +91,6 @@
   pointer-events: auto;
 }
 
-/* Title and close button share a flex row, so the browser keeps them clear
-   of each other — the title needs no clearance value of its own, and the
-   button can change size without anything else being updated by hand. */
 .help-header {
   display: flex;
   align-items: flex-start;
@@ -109,16 +101,12 @@
 .icon-btn.help-close {
   width: var(--close-size);
   height: var(--close-size);
-  /* Glyph sizing, not type — this scales the "x" character to fit the circle,
-     so it belongs with the button's dimensions rather than on --type-*. One
-     step under the +/- buttons' 18px because "x" reads optically larger than
-     "+" at the same size. */
+  /* Glyph sizing, not type. One step under the +/- buttons' 18px because "x"
+     reads optically larger than "+" at the same size. */
   font-size: 17px;
-  /* In flow the button would land at the popover's content edge; this pulls
-     it back out to --close-inset from the popover's outer edge, which is
-     where a close affordance belongs. The same offset on top keeps the
-     button (32px) from making the row taller than the title (~22px), so
-     everything below the header stays put. */
+  /* Pulls the button out to --close-inset from the popover's outer edge
+     instead of its content edge. The negative top also stops the 32px button
+     from making the row taller than the ~22px title. */
   margin: calc(var(--close-inset) - var(--popover-pad))
     calc(var(--close-inset) - var(--popover-pad)) 0 0;
 }

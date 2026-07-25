@@ -60,9 +60,8 @@ const {
 } = hero;
 const scrollHintEl = document.querySelector<HTMLAnchorElement>("#scroll-hint")!;
 
-// Always open on the metronome (first screen). The browser otherwise restores
-// the previous scroll position, and a leftover #links hash would jump straight
-// to the links screen — both would drop a returning visitor onto the wrong page.
+// Always open on the metronome. Restored scroll position and a leftover #links
+// hash would both drop a returning visitor onto the second screen.
 history.scrollRestoration = "manual";
 if (location.hash) history.replaceState(null, "", location.pathname + location.search);
 window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -144,12 +143,9 @@ function pulseTapButton(): void {
   tapButtonEl.classList.add("pulse");
 }
 
-// Anywhere on the page starts/stops the beat, except the control panel and
-// corner buttons, which have their own click behavior — delegated on #app
-// rather than a listener per element, so it also covers empty space outside
-// the tap zone (margins, the gap around the panel, etc). A click while the
-// help popover is open just closes it, rather than also toggling playback
-// underneath.
+// Anywhere on the page starts/stops the beat, except controls with their own
+// click behavior. Delegated on #app so it also covers empty space outside the
+// tap zone. While the popover is open, an outside click only closes it.
 app.addEventListener("click", e => {
   const target = e.target as HTMLElement;
   if (target.closest(".control-panel") || target.closest(".corner-btn") || target.closest(".scroll-hint")) return;
@@ -159,11 +155,9 @@ app.addEventListener("click", e => {
   }
   handleToggle();
 });
-// Space is handled by the single window-level listener below (it already
-// covers the tap zone whenever a button isn't focused) — a second listener
-// here would double-fire on Space since this element is inside that bubble
-// path, toggling start then immediately stop. Enter isn't Space's concern,
-// so it's handled locally per standard role="button" semantics.
+// Enter only. Space is handled by the window listener below; a second handler
+// here would double-fire on Space (this element is in that bubble path) and
+// toggle start then immediately stop.
 tapZoneEl.addEventListener("keydown", e => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -228,7 +222,6 @@ window.addEventListener("keydown", e => {
   }
 });
 
-// Flash the current beat's dot in sync with the audio clock.
 function flashDueBeats(): void {
   const now = engine.getCurrentTime();
   const due = engine.isPlaying ? engine.drainDueBeats(now) : [];

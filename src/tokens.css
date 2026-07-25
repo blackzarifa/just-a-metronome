@@ -1,13 +1,6 @@
-/* The scale. Spacing is a 4px grid with 2px/6px fine steps for the places
-   where 4px is too coarse (icon-to-label gaps, chip padding). Anything laid
-   out in the page — gap, padding, margin — comes from here, so vertical and
-   horizontal rhythm stay in step instead of each rule inventing its own
-   number. Deliberately NOT in this scale:
-     - element sizes (the 34px button, 44px hint, 38px tap button, 168/280px
-       cards): those answer to touch targets and content, not to a grid;
-     - font sizes: type is a separate axis, see --type-* below;
-     - one-off geometry (pendulum rod, slider track) that already derives
-       from its own component-local variables. */
+/* 4px grid, with 2px/6px steps where 4px is too coarse. Gap, padding and
+   margin only — element sizes answer to touch targets and content, not to a
+   grid, and type has its own axis below. */
 :root {
   --space-3xs: 2px;
   --space-2xs: 4px;
@@ -22,52 +15,30 @@
   --space-5xl: 40px;
   --space-6xl: 48px;
 
-  /* Corner radii climb with the size of the box they're on: chips and inputs
-     take -sm, the popover and cards -lg, the big control panel -xl. */
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 20px;
   --radius-xl: 24px;
   --radius-full: 999px;
 
-  /* -fast is for a press (must feel instant), -base for hover/colour, -slow
-     for something the eye should follow, -slower for a fade-out. */
   --dur-fast: 0.1s;
   --dur-base: 0.15s;
   --dur-slow: 0.2s;
   --dur-slower: 0.4s;
 
-  /* Decelerating ease used by everything that settles into place: the
-     pendulum's rest, the popover's open, the slider thumb's grow. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* The type scale: 16px base, ratio 1.125 (a major second), rounded to the
-     nearest half-pixel. Its own axis — never substitute a --space-* here, a
-     4px layout grid has nothing to say about type. Before this existed the
-     app used eight literal sizes inside an 8px range (10.5/12/13/14/15/16),
-     several of them doing the same job at gaps the eye can't resolve (13 vs
-     14, 15 vs 16); four steps that are actually distinguishable replaced them.
-       -xs  fine print and the kbd chips
-       -sm  body copy: help text, shortcut rows, tap state, unit labels
-       -md  the values that body copy labels, and small card headings
-       -lg  the largest non-display text: popover title, beats number
-     It stops at 16px because everything above that in this app is a clamp()
-     display size — BPM number, tempo marking, colophon — fluid by design and
-     deliberately not stepped. Also outside the scale: the +/-/x glyph sizes
-     in primitives.css and corner-controls.css, which size a character to fit
-     a circular button rather than setting text. */
+  /* 16px base, ratio 1.125, rounded to the half-pixel. A separate axis from
+     --space-*; never substitute one for the other. Stops at 16 because
+     everything larger is a clamp() display size. */
   --type-xs: 11px;
   --type-sm: 12.5px;
   --type-md: 14px;
   --type-lg: 16px;
 }
 
-/* Theme tokens. Every color in the app resolves through one of these, so
-   the dark theme below is a pure value swap — no component ever branches on
-   the theme itself. Soft gradient surface, ambient glow behind the pendulum,
-   a glass control panel, and one blue accent. Adapted from a reference
-   mockup, wired to this app's own audio engine, pendulum math, keyboard
-   handling, and BPM sizing. */
+/* Every color resolves through one of these, so the dark theme below is a
+   pure value swap — no component ever branches on the theme itself. */
 
 :root {
   --bg-top: #f7f6f3;
@@ -87,14 +58,10 @@
 
   --btn-bg: rgba(0, 0, 0, 0.05);
 
-  /* Conic ring standing in for a border: bright on one side of the rim,
-     thinning to almost nothing on the opposite edge, instead of an even
-     outline. On this light background the "bright" side can't add much
-     contrast (it's already close to white), so unlike the dark theme's
-     version of this token, the definition here has to come mostly from
-     the shadow side — its alpha is boosted well past dark theme's
-     near-invisible 0.02 so the ring actually reads against a light
-     surface instead of blending into it. */
+  /* Conic ring standing in for a border, bright on one side of the rim. On a
+     light background the bright side adds almost no contrast, so this theme's
+     definition comes from the shadow side instead — hence alphas well above
+     dark theme's near-invisible 0.02. */
   --btn-edge: conic-gradient(
     from 30deg,
     rgba(255, 255, 255, 0.9) 0deg,
@@ -125,9 +92,6 @@
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --serif: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype", serif;
 
-  /* The focus ring is one decision, applied identically everywhere. Only the
-     offset varies per control (it depends on how tight that control's own
-     box is), so offset stays local and the ring itself lives here. */
   --focus-ring: 2px solid var(--accent);
 
   color-scheme: light dark;
