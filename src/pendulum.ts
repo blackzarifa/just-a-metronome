@@ -3,11 +3,10 @@ import type { MetronomeEngine } from "./audio";
 const AMPLITUDE_DEG = 26;
 
 /**
- * Drives the pendulum arm's rotation from the same audio clock that
- * schedules the clicks, so each swing extreme lands exactly on a beat.
- * Cosine easing over the beat's [prev, next) interval gives zero angular
- * velocity at the extremes and maximum velocity through the center, which
- * is how a real pendulum moves.
+ * Drives the arm's rotation from the same audio clock that schedules the
+ * clicks, so each swing extreme lands exactly on a beat. Cosine easing over
+ * the [prev, next) interval gives zero angular velocity at the extremes and
+ * maximum through the center, like a real pendulum.
  */
 export class Pendulum {
   private rafId: number | null = null;
@@ -25,10 +24,9 @@ export class Pendulum {
     this.shadowEl = stageEl.querySelector<HTMLElement>(".pendulum-shadow")!;
     this.engine = engine;
 
-    // The shadow needs the bob's actual sideways travel in pixels, which
-    // depends on the rod's rendered length — that's responsive (clamp/vh
-    // based), so it's measured rather than guessed at, and re-measured
-    // whenever layout changes instead of every frame.
+    // The rod's length is responsive (clamp/vh), so the shadow's travel is
+    // measured rather than guessed, and re-measured on layout change instead
+    // of every frame.
     this.rodLength = this.armEl.offsetHeight;
     this.resizeObserver = new ResizeObserver(() => {
       this.rodLength = this.armEl.offsetHeight;
@@ -71,11 +69,9 @@ export class Pendulum {
 
     this.stageEl.style.setProperty("--pendulum-angle", `${angle}deg`);
 
-    // Mirrors the bob's own horizontal displacement under the arm's CSS
-    // `rotate()` (pivoting at the rod's top): x' = -rodLength * sin(angle).
-    // The shadow is a separate, unrotated element, so it can't inherit that
-    // displacement from the transform — it has to be computed and applied
-    // here to stay under the bob instead of just sitting at rest position.
+    // The shadow is a separate, unrotated element, so it can't inherit the
+    // arm's rotate(). Mirror the bob's displacement by hand to keep the
+    // shadow under it: x' = -rodLength * sin(angle).
     const shiftPx = -this.rodLength * Math.sin((angle * Math.PI) / 180);
     this.shadowEl.style.transform = `translateX(calc(-50% + ${shiftPx}px))`;
   }

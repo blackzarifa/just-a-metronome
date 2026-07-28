@@ -1,0 +1,154 @@
+.links-section {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5xl) var(--space-2xl)
+    calc(var(--space-6xl) + env(safe-area-inset-bottom));
+}
+
+.links-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3xl);
+  width: 100%;
+  max-width: 480px;
+}
+
+.colophon {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.colophon-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(26px, 4.4vw, 34px);
+  color: var(--text);
+}
+
+.colophon-gloss {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(14px, 2.2vw, 16px);
+  color: var(--text-muted);
+}
+
+.hairline {
+  width: 40px;
+  height: 1px;
+  margin: 0;
+  border: none;
+  background: var(--hairline);
+}
+
+.link-row {
+  display: flex;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Lighter blur than the other panels: these sit over the page background
+   rather than over the pendulum, so there's less behind them to soften. */
+.link-card {
+  --panel-filter: blur(14px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  width: 168px;
+  padding: var(--space-3xl) var(--space-xl) var(--space-2xl);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    transform var(--dur-slow) ease,
+    border-color var(--dur-slow);
+}
+
+.link-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--panel-border));
+}
+
+.link-icon {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--text-muted);
+}
+
+.link-icon.is-filled {
+  fill: var(--text-muted);
+  stroke: none;
+}
+
+.link-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+/* One step above .link-sub, and no higher: the 168px card leaves 128px of
+   content box, which Chrome floors to 126, and "Buy me a coffee" needs 126.7px
+   at -lg — it would wrap and grow both cards by 24px. The card width, not the
+   scale, sets the ceiling here. */
+.link-label {
+  font-size: var(--type-md);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.link-sub {
+  font-size: var(--type-sm);
+  color: var(--text-muted);
+}
+
+@media (min-width: 900px) {
+  .links-inner {
+    max-width: 620px;
+    gap: var(--space-5xl);
+  }
+
+  .link-card {
+    width: 280px;
+    padding: var(--space-4xl) var(--space-3xl) var(--space-3xl);
+    gap: var(--space-lg);
+    border-radius: var(--radius-xl);
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .link-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .link-text {
+    align-items: flex-start;
+  }
+
+  .link-label {
+    font-size: var(--type-lg);
+  }
+
+  .link-sub {
+    font-size: var(--type-md);
+  }
+}

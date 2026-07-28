@@ -1,0 +1,183 @@
+.corner-controls {
+  --corner-inset: var(--space-2xl);
+
+  position: fixed;
+  top: max(20px, env(safe-area-inset-top));
+  right: var(--corner-inset);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* .corner-btn carries no styling of its own — the corner buttons are exactly
+   the app's standard icon button (see primitives.css). The class stays
+   because main.ts's delegated click handler uses it to tell "a control was
+   clicked" from "the page was clicked to start the beat". */
+
+/* Keyboard shortcuts don't apply on touch devices, so the button
+   pointing to them shouldn't either. */
+@media (hover: none) and (pointer: coarse) {
+  .help-toggle {
+    display: none;
+  }
+}
+
+.help-toggle .icon-help {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Both icons occupy the same grid cell so the button doesn't resize or
+   reflow when the theme swaps which one is visible. */
+.theme-toggle .icon {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  grid-area: 1 / 1;
+}
+
+.theme-toggle .icon-sun circle {
+  fill: currentColor;
+  stroke: none;
+}
+
+.theme-toggle .icon-moon {
+  fill: currentColor;
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  display: block;
+}
+
+.help-popover {
+  --popover-pad: var(--space-xl);
+  --close-size: 32px;
+  --close-inset: var(--space-sm);
+
+  position: absolute;
+  top: calc(100% + var(--space-md));
+  right: 0;
+  z-index: 9;
+  width: min(300px, calc(100vw - var(--corner-inset) * 2));
+  padding: var(--popover-pad);
+  border-radius: var(--radius-lg);
+  cursor: default;
+  transform-origin: top right;
+  opacity: 0;
+  transform: scale(0.94) translateY(-6px);
+  pointer-events: none;
+  transition:
+    opacity var(--dur-base) ease,
+    transform var(--dur-base) var(--ease-out);
+}
+
+.help-popover.is-open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+.help-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.icon-btn.help-close {
+  width: var(--close-size);
+  height: var(--close-size);
+  /* Glyph sizing, not type. One step under the +/- buttons' 18px because "x"
+     reads optically larger than "+" at the same size. */
+  font-size: 17px;
+  /* Pulls the button out to --close-inset from the popover's outer edge
+     instead of its content edge. The negative top also stops the 32px button
+     from making the row taller than the ~22px title. */
+  margin: calc(var(--close-inset) - var(--popover-pad))
+    calc(var(--close-inset) - var(--popover-pad)) 0 0;
+}
+
+.help-title {
+  flex: 1;
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: var(--type-lg);
+  color: var(--text);
+}
+
+.help-text {
+  margin: 0 0 var(--space-lg);
+  font-size: var(--type-sm);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.help-shortcuts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.help-shortcuts li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--type-sm);
+  color: var(--text-muted);
+}
+
+/* Extra room after the last key in a row, so "←→" reads as one pair
+   before its description rather than running into it. */
+.help-shortcuts span {
+  margin-left: var(--space-2xs);
+}
+
+.help-shortcuts kbd,
+.help-tip kbd {
+  font-family: inherit;
+  font-size: var(--type-xs);
+  font-weight: 600;
+  min-width: 17px;
+  height: 18px;
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--btn-bg);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+}
+
+.help-tip {
+  margin: var(--space-lg) 0 0;
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--type-sm);
+  color: var(--text-muted);
+}
+
+.help-tip kbd {
+  margin: 0 1px;
+}

@@ -2,16 +2,17 @@ import "./style.css";
 import { MetronomeEngine, TapTempo } from "./audio";
 import { Pendulum } from "./pendulum";
 import { tempoMarkingFor } from "./tempo";
+import { createCornerControls } from "./components/corner-controls";
+import { createLinksSection } from "./components/links-section";
+import { createHero } from "./components/hero";
 import {
   loadState,
   saveBpm,
   saveBeatsPerBar,
-  saveTheme,
   MIN_BPM,
   MAX_BPM,
   MIN_BEATS_PER_BAR,
   MAX_BEATS_PER_BAR,
-  type Theme,
 } from "./storage";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -20,118 +21,57 @@ app.innerHTML = `
   <div class="backdrop-grain" aria-hidden="true"></div>
   <div class="backdrop-glow" aria-hidden="true"></div>
 
-  <button id="help-toggle" class="corner-btn help-toggle" type="button"
-          aria-label="Show instructions and keyboard shortcuts" aria-haspopup="dialog" aria-expanded="false">
-    <svg class="icon icon-help" viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2.5" y="6" width="19" height="13" rx="2"></rect>
-      <line x1="6" y1="9.5" x2="6" y2="9.5"></line>
-      <line x1="9.5" y1="9.5" x2="9.5" y2="9.5"></line>
-      <line x1="13" y1="9.5" x2="13" y2="9.5"></line>
-      <line x1="16.5" y1="9.5" x2="16.5" y2="9.5"></line>
-      <line x1="6" y1="12.5" x2="6" y2="12.5"></line>
-      <line x1="9.5" y1="12.5" x2="9.5" y2="12.5"></line>
-      <line x1="13" y1="12.5" x2="13" y2="12.5"></line>
-      <line x1="16.5" y1="12.5" x2="16.5" y2="12.5"></line>
-      <line x1="7" y1="15.7" x2="15.5" y2="15.7"></line>
-    </svg>
-  </button>
-
-  <button id="theme-toggle" class="corner-btn theme-toggle" type="button" aria-label="Switch to dark theme">
-    <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="4.2"></circle>
-      <g class="sun-rays">
-        <line x1="12" y1="1.5" x2="12" y2="4.5"></line>
-        <line x1="12" y1="19.5" x2="12" y2="22.5"></line>
-        <line x1="1.5" y1="12" x2="4.5" y2="12"></line>
-        <line x1="19.5" y1="12" x2="22.5" y2="12"></line>
-        <line x1="4.4" y1="4.4" x2="6.5" y2="6.5"></line>
-        <line x1="17.5" y1="17.5" x2="19.6" y2="19.6"></line>
-        <line x1="4.4" y1="19.6" x2="6.5" y2="17.5"></line>
-        <line x1="17.5" y1="6.5" x2="19.6" y2="4.4"></line>
-      </g>
-    </svg>
-    <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M20.5 14.7A8.5 8.5 0 1 1 9.3 3.5a7 7 0 0 0 11.2 11.2Z"></path>
-    </svg>
-  </button>
-
-  <section id="help-popover" class="help-popover" role="dialog" aria-modal="false"
-           aria-label="Instructions and keyboard shortcuts" aria-hidden="true">
-    <button id="help-close" class="icon-btn help-close" type="button" aria-label="Close">&times;</button>
-    <h2 class="help-title">How to use</h2>
-    <p class="help-text">Click or tap anywhere to start or stop the beat.</p>
-    <ul class="help-shortcuts">
-      <li><kbd>Space</kbd><span>start / stop</span></li>
-      <li><kbd>&larr;</kbd><kbd>&rarr;</kbd><span>tempo &plusmn;1 (&plusmn;5 with Shift)</span></li>
-      <li><kbd>&uarr;</kbd><kbd>&darr;</kbd><span>beats per bar</span></li>
-      <li><kbd>T</kbd><span>tap tempo</span></li>
-    </ul>
-    <p class="help-tip"><kbd>WASD</kbd> / <kbd>HJKL</kbd> also supported</p>
-  </section>
-
-  <main id="tap-zone" class="tap-zone" role="button" tabindex="0" aria-pressed="false"
-        aria-label="Tap, click, or press space to start or stop the metronome">
-    <div class="tempo-marking">
-      <p id="marking-name" class="marking-name">Moderato</p>
-      <p id="marking-gloss" class="marking-gloss">at a moderate pace</p>
-    </div>
-
-    <div id="pendulum-stage" class="pendulum-stage" aria-hidden="true">
-      <div class="pendulum-shadow"></div>
-      <div class="pendulum-pivot"></div>
-      <div class="pendulum-arm">
-        <div class="pendulum-rod"></div>
-        <div class="pendulum-bob"></div>
-      </div>
-    </div>
-    <p id="tap-state" class="tap-state">tap to start</p>
-
-    <div class="bpm-display">
-      <span id="bpm-number" class="bpm-number">96</span>
-      <span class="bpm-unit">BPM</span>
-    </div>
-
-    <div id="beat-dots" class="beat-dots" aria-hidden="true"></div>
-  </main>
-
-  <section class="control-panel">
-    <div class="control-row">
-      <button id="bpm-minus" class="icon-btn" type="button" aria-label="Decrease tempo by 1 BPM">&minus;</button>
-      <input id="bpm-slider" class="tempo-slider" type="range"
-             min="${MIN_BPM}" max="${MAX_BPM}" step="1" value="96"
-             aria-label="Tempo in beats per minute">
-      <button id="bpm-plus" class="icon-btn" type="button" aria-label="Increase tempo by 1 BPM">&plus;</button>
-    </div>
-
-    <div class="control-row secondary-row">
-      <button id="tap-button" class="tap-button" type="button">TAP</button>
-      <div class="beats-control" role="group" aria-label="Beats per bar">
-        <button id="beats-minus" class="icon-btn" type="button" aria-label="Decrease beats per bar">&minus;</button>
-        <span class="beats-value"><span id="beats-number" class="beats-number">4</span> beats</span>
-        <button id="beats-plus" class="icon-btn" type="button" aria-label="Increase beats per bar">&plus;</button>
-      </div>
-    </div>
-  </section>
+  <div class="scroll-hint-region">
+    <a id="scroll-hint" class="scroll-hint" href="#links"
+       aria-label="More: source code and support">
+      <svg class="icon icon-chevron" viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </a>
+  </div>
 `;
 
-const tapZoneEl = document.querySelector<HTMLElement>("#tap-zone")!;
-const tapStateEl = document.querySelector<HTMLElement>("#tap-state")!;
-const pendulumStageEl = document.querySelector<HTMLElement>("#pendulum-stage")!;
-const bpmNumberEl = document.querySelector<HTMLElement>("#bpm-number")!;
-const markingNameEl = document.querySelector<HTMLElement>("#marking-name")!;
-const markingGlossEl = document.querySelector<HTMLElement>("#marking-gloss")!;
-const beatDotsEl = document.querySelector<HTMLElement>("#beat-dots")!;
-const bpmSliderEl = document.querySelector<HTMLInputElement>("#bpm-slider")!;
-const bpmMinusEl = document.querySelector<HTMLButtonElement>("#bpm-minus")!;
-const bpmPlusEl = document.querySelector<HTMLButtonElement>("#bpm-plus")!;
-const beatsNumberEl = document.querySelector<HTMLElement>("#beats-number")!;
-const beatsMinusEl = document.querySelector<HTMLButtonElement>("#beats-minus")!;
-const beatsPlusEl = document.querySelector<HTMLButtonElement>("#beats-plus")!;
-const tapButtonEl = document.querySelector<HTMLButtonElement>("#tap-button")!;
-const themeToggleEl = document.querySelector<HTMLButtonElement>("#theme-toggle")!;
-const helpToggleEl = document.querySelector<HTMLButtonElement>("#help-toggle")!;
-const helpPopoverEl = document.querySelector<HTMLElement>("#help-popover")!;
-const helpCloseEl = document.querySelector<HTMLButtonElement>("#help-close")!;
+// Second screen (source + support links) lives as a sibling of #app so it
+// sits outside the click-to-start zone and reveals only on deliberate scroll.
+const linksSection = createLinksSection();
+document.body.appendChild(linksSection.el);
+
+const hero = createHero();
+app.querySelector(".scroll-hint-region")!.before(hero.el);
+
+const cornerControls = createCornerControls();
+hero.el.before(cornerControls.el);
+
+const {
+  tapZoneEl,
+  tapStateEl,
+  pendulumStageEl,
+  bpmNumberEl,
+  markingNameEl,
+  markingGlossEl,
+  beatDotsEl,
+  bpmSliderEl,
+  bpmMinusEl,
+  bpmPlusEl,
+  beatsNumberEl,
+  beatsMinusEl,
+  beatsPlusEl,
+  tapButtonEl,
+} = hero;
+const scrollHintEl = document.querySelector<HTMLAnchorElement>("#scroll-hint")!;
+
+// Always open on the metronome. Restored scroll position and a leftover #links
+// hash would both drop a returning visitor onto the second screen.
+history.scrollRestoration = "manual";
+if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
+// Reveal the links screen without writing a #links hash into the URL (which is
+// what made the next load reopen there).
+scrollHintEl.addEventListener("click", e => {
+  e.preventDefault();
+  linksSection.el.scrollIntoView({ behavior: "smooth" });
+});
 
 const engine = new MetronomeEngine();
 const tapTempo = new TapTempo();
@@ -203,57 +143,21 @@ function pulseTapButton(): void {
   tapButtonEl.classList.add("pulse");
 }
 
-function openHelp(): void {
-  helpPopoverEl.classList.add("is-open");
-  helpPopoverEl.setAttribute("aria-hidden", "false");
-  helpToggleEl.setAttribute("aria-expanded", "true");
-  helpCloseEl.focus();
-}
-
-function closeHelp(returnFocus: boolean): void {
-  if (!helpPopoverEl.classList.contains("is-open")) return;
-  helpPopoverEl.classList.remove("is-open");
-  helpPopoverEl.setAttribute("aria-hidden", "true");
-  helpToggleEl.setAttribute("aria-expanded", "false");
-  if (returnFocus) helpToggleEl.focus();
-}
-
-function toggleHelp(): void {
-  if (helpPopoverEl.classList.contains("is-open")) closeHelp(true);
-  else openHelp();
-}
-
-function setTheme(theme: Theme): void {
-  document.documentElement.setAttribute("data-theme", theme);
-  themeToggleEl.setAttribute(
-    "aria-label",
-    theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
-  );
-  saveTheme(theme);
-}
-
-// --- wire up interactions ---
-
-// Anywhere on the page starts/stops the beat, except the control panel and
-// corner buttons, which have their own click behavior — delegated on #app
-// rather than a listener per element, so it also covers empty space outside
-// the tap zone (margins, the gap around the panel, etc). A click while the
-// help popover is open just closes it, rather than also toggling playback
-// underneath.
+// Anywhere on the page starts/stops the beat, except controls with their own
+// click behavior. Delegated on #app so it also covers empty space outside the
+// tap zone. While the popover is open, an outside click only closes it.
 app.addEventListener("click", e => {
   const target = e.target as HTMLElement;
-  if (target.closest(".control-panel") || target.closest(".corner-btn")) return;
-  if (helpPopoverEl.classList.contains("is-open")) {
-    if (!target.closest(".help-popover")) closeHelp(false);
+  if (target.closest(".control-panel") || target.closest(".corner-btn") || target.closest(".scroll-hint")) return;
+  if (cornerControls.isHelpOpen()) {
+    if (!target.closest(".help-popover")) cornerControls.closeHelp(false);
     return;
   }
   handleToggle();
 });
-// Space is handled by the single window-level listener below (it already
-// covers the tap zone whenever a button isn't focused) — a second listener
-// here would double-fire on Space since this element is inside that bubble
-// path, toggling start then immediately stop. Enter isn't Space's concern,
-// so it's handled locally per standard role="button" semantics.
+// Enter only. Space is handled by the window listener below; a second handler
+// here would double-fire on Space (this element is in that bubble path) and
+// toggle start then immediately stop.
 tapZoneEl.addEventListener("keydown", e => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -274,26 +178,18 @@ tapButtonEl.addEventListener("click", () => {
   pulseTapButton();
 });
 
-themeToggleEl.addEventListener("click", () => {
-  const current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-  setTheme(current === "dark" ? "light" : "dark");
-});
-
-helpToggleEl.addEventListener("click", toggleHelp);
-helpCloseEl.addEventListener("click", () => closeHelp(true));
-
 window.addEventListener("keydown", e => {
   const isButtonFocused = document.activeElement instanceof HTMLButtonElement;
   const key = e.key;
 
   if (key === "Escape") {
-    closeHelp(true);
+    cornerControls.closeHelp(true);
     return;
   }
 
   if (key === "?") {
     e.preventDefault();
-    toggleHelp();
+    cornerControls.toggleHelp();
     return;
   }
 
@@ -303,6 +199,8 @@ window.addEventListener("keydown", e => {
     if (!e.repeat) handleToggle();
     return;
   }
+
+  if (e.ctrlKey || e.metaKey || e.altKey) return; // don't hijack browser shortcuts like Ctrl+L
 
   const lower = key.toLowerCase();
   const tempoStep = e.shiftKey ? 5 : 1;
@@ -324,7 +222,6 @@ window.addEventListener("keydown", e => {
   }
 });
 
-// Flash the current beat's dot in sync with the audio clock.
 function flashDueBeats(): void {
   const now = engine.getCurrentTime();
   const due = engine.isPlaying ? engine.drainDueBeats(now) : [];
@@ -338,8 +235,6 @@ function flashDueBeats(): void {
   }
   requestAnimationFrame(flashDueBeats);
 }
-
-// --- initial render ---
 
 applyBpm(bpm, false);
 applyBeatsPerBar(beatsPerBar, false);

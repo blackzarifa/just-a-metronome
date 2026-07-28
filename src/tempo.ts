@@ -3,8 +3,6 @@ export interface TempoMarking {
   gloss: string;
 }
 
-// Ranges cover the app's full 30-260 BPM span with no gaps, adapted from
-// standard tempo-marking tables to the nine terms requested.
 const MARKINGS: Array<{ maxBpm: number } & TempoMarking> = [
   { maxBpm: 45, name: "Largo", gloss: "very slow and broad" },
   { maxBpm: 59, name: "Adagio", gloss: "slow and stately" },

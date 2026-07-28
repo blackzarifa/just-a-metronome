@@ -1,0 +1,67 @@
+/* Flat translucent fill plus a ::before ring: a conic gradient masked to the
+   rim (inner mask layer subtracted via mask-composite), lit from 30deg
+   clockwise of 12 o'clock. That light direction is the app's convention —
+   the slider thumb follows it too. */
+.btn {
+  position: relative;
+  border: 1px solid transparent;
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background var(--dur-base),
+    color var(--dur-slow),
+    transform var(--dur-fast);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--btn-edge);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background var(--dur-base);
+}
+
+.btn:hover::before {
+  background: var(--btn-edge-hover);
+}
+
+/* Per-button override: the same scale factor reads as a bigger jump on a wide
+   pill than on a 34px circle. */
+.btn:active {
+  transform: scale(var(--btn-press, 0.92));
+}
+
+.btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.icon-btn {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  /* Glyph sizing, not type: fits the "+"/"-" characters to the 34px circle,
+     so it tracks the button's size rather than --type-*. */
+  font-size: 18px;
+  line-height: 1;
+}
+
+.panel {
+  background: var(--panel-bg);
+  backdrop-filter: var(--panel-filter, blur(22px) saturate(140%));
+  -webkit-backdrop-filter: var(--panel-filter, blur(22px) saturate(140%));
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--panel-shadow);
+}
