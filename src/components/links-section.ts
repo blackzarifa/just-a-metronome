@@ -43,7 +43,7 @@ export function createLinksSection(): LinksSection {
         </svg>
         <div class="link-text">
           <span class="link-label">Buy me a coffee</span>
-          <span class="link-sub">If it helped</span>
+          <span class="link-sub">If it helped c:</span>
         </div>
       </a>
       </nav>
