@@ -32,7 +32,7 @@ export function createLinksSection(): LinksSection {
         </div>
       </a>
 
-      <a class="panel link-card" href="#" data-placeholder="donation"
+      <a class="panel link-card" href="https://ko-fi.com/blackzarifa"
          target="_blank" rel="noopener noreferrer">
         <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 8h13a3 3 0 0 1 0 6h-1"></path>
