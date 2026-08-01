@@ -157,12 +157,11 @@
 }
 
 .bpm-display {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
+  position: relative;
 }
 
 .bpm-number {
+  display: block;
   font-family: var(--sans);
   font-weight: 600;
   font-size: clamp(64px, 17vw, 104px);
@@ -173,11 +172,16 @@
 }
 
 .bpm-unit {
+  position: absolute;
+  left: 100%;
+  bottom: 0.15em;
+  margin-left: var(--space-sm);
   font-family: var(--sans);
   font-weight: 600;
   font-size: var(--type-sm);
   letter-spacing: 0.14em;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 /* min-height holds the row open at the accent dot's size, so adding or
