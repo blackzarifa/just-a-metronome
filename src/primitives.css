@@ -8,6 +8,7 @@
   background: var(--btn-bg);
   color: var(--text);
   cursor: pointer;
+  touch-action: manipulation;
   transition:
     background var(--dur-base),
     color var(--dur-slow),
